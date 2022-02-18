@@ -6,11 +6,10 @@ format: pdf
 editor: visual
 ---
 
-```{r}
+```{r warning = F, message = F}
 #| label: load-packages
 
 library(tidyverse)
-
 ```
 
 # Project idea 1
