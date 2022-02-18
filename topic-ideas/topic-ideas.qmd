@@ -16,36 +16,32 @@ library(tidyverse)
 
 ## Introduction and data
 
--   State the source of the data set.
+-   The source of the dataset is from the Board Game Geek website through the tidy tuesday package. A larger dataset can be found on Kaggle.
 
-    -   The source of the dataset is from the Board Game Geek website through the tidy tuesday package. A larger dataset can be found on Kaggle.
+-   The data was collected through crowd-sourced ratings posted on the Board Game Geek website over the span of various years, but for our analysis we will only focus on ratings during the year 2016. 
 
--   Describe when and how it was originally collected (by the original data curator, not necessarily how you found the data)
+-   The data actually belongs to 2 datasets, one contains the technical information of the board games, and more details on the number of users owning them, and the another contains the information of data rating with numbers of users rated the board game. We plan to combine the datasets together. There are a lot of variables associated with the data, but for our own interest and for the research questions we want to answer, these variables/characteristic are the most important:
 
-    -   The data was collected through crowd-sourced ratings posted on the Board Game Geek website over the span of various years, but for our analysis we will only focus on ratings during the year 2016. 
+    -   `average`: variable of `ratings.csv`, the rating of user on a scale from 0 to 10.
 
--   Describe the observations and the general characteristics being measured in the data
+    -   `minplayer, maxplayer, minplaytime, maxplaytime, playingtime, minage:` variable of `details.csv`, the characteristics of the games, including min/max players allowed, min/max playing time allowed, playing time estimate of the game, and minimum age allowed. These are based on the rules of the game.
 
-    -   The data is splitted into two datasets, one contains the technical information of the board games, and more details on the number of users owning them, and the another contains the information of data rating with numbers of users rated the board game. There are a lot of variables associated with the data, but for our own interest and for the research questions we want to answer, these variables/characteristic are the most important:
-        -   `average`: variable of `ratings.csv`, the rating of user on a scale from 0 to 10.
+    -   `users_rated`: a variable of `ratings.csv`, the number of users rated the games.
 
-        -   `minplayer, maxplayer, minplaytime, maxplaytime, playingtime, minage:` variable of `details.csv`, the characteristics of the games, including min/max players allowed, min/max playing time allowed, playing time estimate of the game, and minimum age allowed. These are based on the rules of the game.
+    -   `owned`: a variable of `details.csv`, the number of people who have the games.
 
-        -   `users_rated`: a variable of `ratings.csv`, the number of users rated the games.
+    -   year of published, category and game mechanic could also contribute to the analysis.
 
-        -   `owned`: a variable of `details.csv`, the number of people who have the games.
-
-        -   year of published, category and game mechanic could also contribute to the analysis.
-    -   Though the data splitted into two separated datasets, we will perform a merge of the two together to make our analysis easier. However, one thing we might consider is that we might have to erase around 200 observations since ratings has 200 observations more compared to details. In both dataset, we have the game id and name which can help us combine the two datasets correctly, and we will base on that to merge. Also, after merging, we will filter out board games published in only one specific year, which we initially agree to choose the year 2016.
+    ```{=html}
+    <!-- -->
+    ```
+    -   Though the data is split between two separated datasets, we will perform a merge of the two together to make our analysis easier. In both datasets, we have game id and name. We weill use that to merge the 2 datasets. Also, because there are so many different observation, we will filter out board games published in only one specific year, which we initially agree to choose the year 2016.
 
 ## Research question
 
--   Describe a research question you're interested in answering using this data.
-    -   What can predict Board Game rating and popularity (measured by number of user ratings)? How can we use features of the games, and number of users to predict those outcomes?
+-   What can predict Board Game rating and popularity (measured by number of user ratings)? How can we use features of the games, and number of users to predict those outcomes?
 
 ## Glimpse of data
-
--   Use the `glimpse` function to provide an overview of the dataset
 
 ```{r warning = F, message = F}
 #| label: data-1
@@ -98,8 +94,6 @@ glimpse(details)
 
 ## Glimpse of data
 
--   Use the `glimpse` function to provide an overview of the dataset
-
 ```{r}
 #| label: data-2
 
@@ -109,31 +103,3 @@ glimpse(chocolate)
 ```
 
 \pagebreak
-
-# Project idea 3
-
-::: callout-important
-Project idea 3 is optional. If you decide to submit only 2 ideas, please delete the section headings below and leave a note below stating so. If you decide to submit the 3rd idea, please delete this callout.
-:::
-
-## Introduction and data
-
--   State the source of the data set.
-
--   Describe when and how it was originally collected (by the original data curator, not necessarily how you found the data)
-
--   Describe the observations and the general characteristics being measured in the data
-
-## Research question
-
--   Describe a research question you're interested in answering using this data.
-
-## Glimpse of data
-
--   Use the `glimpse` function to provide an overview of the dataset
-
-```{r}
-#| label: data-3
-
-# add code to load and glimpse data here
-```
