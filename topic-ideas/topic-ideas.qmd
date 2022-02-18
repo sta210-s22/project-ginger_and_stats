@@ -20,26 +20,25 @@ library(tidyverse)
 
 -   The data was collected through crowd-sourced ratings posted on the Board Game Geek website over the span of various years, but for our analysis we will only focus on ratings during the year 2016. 
 
--   The data actually belongs to 2 datasets (ratings and details), one contains the technical information of the board games, and more details on the number of users owning them, and the another contains the information of data rating with numbers of users rated the board game. We plan to combine the datasets together. There are a lot of variables associated with the data, but for our own interest and for the research questions we want to answer, these variables/characteristic are the most important:
+-   The data actually belongs to 2 datasets (ratings and details), one contains the technical information (rules, category, descriptions, etc.) of the board games, and more details on the number of users owning them, and the another contains the information of data rating with numbers of users rated the board game. We plan to combine the datasets together. There are a lot of variables associated with the data, but for our own interest and for the research questions we want to answer, these variables/characteristics are the most important:
 
     -   `average`: variable of `ratings.csv`, the rating of user on a scale from 0 to 10.
 
-    -   `minplayer, maxplayer, minplaytime, maxplaytime, playingtime, minage:` variable of `details.csv`, the characteristics of the games, including min/max players allowed, min/max playing time allowed, playing time estimate of the game, and minimum age allowed. These are based on the rules of the game.
+    -   `minplayer, maxplayer, minplaytime, maxplaytime, playingtime, minage:` variables of `details.csv`, the characteristics of the games, including min/max players allowed, min/max playing time allowed, playing time estimate of the game, and minimum age allowed. These are based on the rules of the game.
 
     -   `users_rated`: a variable of `ratings.csv`, the number of users rated the games.
 
     -   `owned`: a variable of `details.csv`, the number of people who have the games.
 
-    -   year of published, category and game mechanic could also contribute to the analysis.
+    -   year of being published, category, and game mechanic could also contribute to the analysis.
 
-    ```{=html}
     <!-- -->
-    ```
-    -   Though the data is split between two separated datasets, we will perform a merge of the two together to make our analysis easier. In both datasets, we have game id and name. We weill use that to merge the 2 datasets. Also, because there are so many different observation, we will filter out board games published in only one specific year, which we initially agree to choose the year 2016.
+
+    -   Though the data is split between two separated datasets, we will perform a merge of the two together to make our analysis easier. In both datasets, we have game id and name. We will use that to merge the 2 datasets. Also, because there are so many different observations, we plan to filter out only board games published in one specific year, which we initially agree to choose the year 2016, and this is also to avoid dependency on time.
 
 ## Research question
 
--   What can predict Board Game rating and popularity (measured by number of user ratings)? How can we use features of the games, and number of users to predict those outcomes?
+-   What can predict Board Game rating and popularity (measured by number of user ratings)? How can we use features of the games, and number of users play the games to predict those outcomes?
 
 ## Glimpse of data
 
@@ -94,7 +93,7 @@ glimpse(details)
 
 ## Glimpse of data
 
-```{r}
+```{r warning = F, message = F}
 #| label: data-2
 
 chocolate <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-01-18/chocolate.csv')
