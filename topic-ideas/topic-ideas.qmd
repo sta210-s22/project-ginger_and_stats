@@ -26,11 +26,22 @@ library(tidyverse)
 
 -   Describe the observations and the general characteristics being measured in the data
 
-    -   The data is splitted into two datasets, one contains the technical information of the board games, and more details on the number of users owning them.
+    -   The data is splitted into two datasets, one contains the technical information of the board games, and more details on the number of users owning them, and the another contains the information of data rating with numbers of users rated the board game. There are a lot of variables associated with the data, but for our own interest and for the research questions we want to answer, these variables/characteristic are the most important:
+        -   `average`: variable of `ratings.csv`, the rating of user on a scale from 0 to 10.
+
+        -   `minplayer, maxplayer, minplaytime, maxplaytime, playingtime, minage:` variable of `details.csv`, the characteristics of the games, including min/max players allowed, min/max playing time allowed, playing time estimate of the game, and minimum age allowed. These are based on the rules of the game.
+
+        -   `users_rated`: a variable of `ratings.csv`, the number of users rated the games.
+
+        -   `owned`: a variable of `details.csv`, the number of people who have the games.
+
+        -   year of published, category and game mechanic could also contribute to the analysis.
+    -   Though the data splitted into two separated datasets, we will perform a merge of the two together to make our analysis easier. However, one thing we might consider is that we might have to erase around 200 observations since ratings has 200 observations more compared to details. In both dataset, we have the game id and name which can help us combine the two datasets correctly, and we will base on that to merge. Also, after merging, we will filter out board games published in only one specific year, which we initially agree to choose the year 2016.
 
 ## Research question
 
 -   Describe a research question you're interested in answering using this data.
+    -   What can predict Board Game rating and popularity (measured by number of user ratings)? How can we use features of the games, and number of users to predict those outcomes?
 
 ## Glimpse of data
 

@@ -1,19 +1,15 @@
-# data
+# Data
 
-Place data file(s) in this folder.
+The data is collected by Board Games Geek, which contains of two main datasets. The first dataset contains details, technical information of the boardgame (about category, rules, description, playing time, etc.). The second dataset gives ratings of the game. 
 
-Then, include metadata about your dataset including information on provenance, codebook, etc.
-
-The codebook for your data file(s) using the following format.
-
-## name of data file
+## Name of data file
 
 ### details.csv
 
 Data of 21631 observations of 23 variables
 
 |variable         |description | class |
-|:----------------|:-----------|:------ |
+|:----------------|:-----------|:------|
 |`num`             | Game number | double |
 |`id`               | Game ID | double |
 |`primary`          | Primary name of the game | character
