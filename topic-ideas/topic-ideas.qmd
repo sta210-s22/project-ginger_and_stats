@@ -18,9 +18,15 @@ library(tidyverse)
 
 -   State the source of the data set.
 
+    -   The source of the dataset is from the Board Game Geek website through the tidy tuesday package. A larger dataset can be found on Kaggle.
+
 -   Describe when and how it was originally collected (by the original data curator, not necessarily how you found the data)
 
+    -   The data was collected through crowd-sourced ratings posted on the Board Game Geek website over the span of various years, but for our analysis we will only focus on ratings during the year 2016. 
+
 -   Describe the observations and the general characteristics being measured in the data
+
+    -   The data is splitted into two datasets, one contains the technical information of the board games, and more details on the number of users owning them.
 
 ## Research question
 
@@ -35,11 +41,10 @@ library(tidyverse)
 
 details <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-01-25/details.csv')
 
+ratings <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-01-25/ratings.csv')
 
-detail_2016 <- details %>%
-  filter(yearpublished == 2016)
-
-glimpse(detail_2016)
+glimpse(ratings)
+glimpse(details)
 ```
 
 \pagebreak
