@@ -53,15 +53,37 @@ glimpse(details)
 
 ## Introduction and data
 
--   State the source of the data set.
+-   The dataset comes from Flavors of Cocoa:
 
--   Describe when and how it was originally collected (by the original data curator, not necessarily how you found the data)
+    -   <http://flavorsofcacao.com/chocolate_database.html>
 
--   Describe the observations and the general characteristics being measured in the data
+    -   The Manhattan Chocolate Society collected the data, and the dataset contains reviews of over 2,500 plain chocolate bars from 2006 to 2021. Each row represents a plain chocolate bar, and the columns represents characteristics of the chocolate bar. From the flavors of cocoa website, it looks like the subjective variables are from the tasters that are part of the society, while the objective observations are from the chocolate manufacturers.
+
+-   Data is being continuously collected and added to the dataset after reviewing chocolate bars. The reviews started in 2006 and have continued until 2021.
+
+-   As mentioned above, the data can be broken into 2 groups: subjective and objective.
+
+    -   The subjective observations include rating and most memorable characteristics. These are determined by the tasters form the Manhattan Chocolate society.
+
+        -   The rating system can found here: <http://flavorsofcacao.com/review_guide.html>
+
+        -   As a summary, the rating scale is:
+
+            -   4.0-5.0 = Outstanding
+
+            -   3.5-3.9= Highly Recommended
+
+            -   3.0-3.49= Recommended
+
+            -   2.0-2.9= Disappointing
+
+            -   1.0-1.9= Unpleasant
+
+    -   The objective observations are descriptions given by the chocolate manufacturer themselves. These observations include: country of bean origin, percent of cocoa for each chocolate bar, ingredients, company, and company location.
 
 ## Research question
 
--   Describe a research question you're interested in answering using this data.
+-   What characteristics can predict chocolate ratings?
 
 ## Glimpse of data
 
