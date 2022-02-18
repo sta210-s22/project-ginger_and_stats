@@ -20,7 +20,7 @@ library(tidyverse)
 
 -   The data was collected through crowd-sourced ratings posted on the Board Game Geek website over the span of various years, but for our analysis we will only focus on ratings during the year 2016. 
 
--   The data actually belongs to 2 datasets, one contains the technical information of the board games, and more details on the number of users owning them, and the another contains the information of data rating with numbers of users rated the board game. We plan to combine the datasets together. There are a lot of variables associated with the data, but for our own interest and for the research questions we want to answer, these variables/characteristic are the most important:
+-   The data actually belongs to 2 datasets (ratings and details), one contains the technical information of the board games, and more details on the number of users owning them, and the another contains the information of data rating with numbers of users rated the board game. We plan to combine the datasets together. There are a lot of variables associated with the data, but for our own interest and for the research questions we want to answer, these variables/characteristic are the most important:
 
     -   `average`: variable of `ratings.csv`, the rating of user on a scale from 0 to 10.
 
