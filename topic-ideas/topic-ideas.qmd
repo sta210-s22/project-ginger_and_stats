@@ -59,7 +59,7 @@ glimpse(details)
 
     -   The Manhattan Chocolate Society collected the data, and the dataset contains reviews of over 2,500 plain chocolate bars from 2006 to 2021. Each row represents a plain chocolate bar, and the columns represents characteristics of the chocolate bar. From the flavors of cocoa website, it looks like the subjective variables are from the tasters that are part of the society, while the objective observations are from the chocolate manufacturers.
 
--   Data is being continuously collected and added to the dataset after reviewing chocolate bars. The reviews started in 2006 and have continued until 2021.
+-   Data is being continuously collected and added to the dataset after chocolate bars are reviewed. The reviews started in 2006 and have continued until 2021.
 
 -   As mentioned above, the data can be broken into 2 groups: subjective and objective.
 
