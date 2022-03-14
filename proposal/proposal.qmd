@@ -24,6 +24,26 @@ glimpse(chocolate)
 
 ## Data description
 
+-   Description of the observations in the data set
+
+    -   The observations in this data set represent a review of general characteristics for different chocolate bars. A single observation in this data set represents a single chocolate bar.
+
+    -   The general characteristics are as follows:
+
+        -   Company (Manufacturer) lists who made the chocolate bar reviewed; the dataset also lists where this company is located under Company Location
+
+        -   The dataset characterizes the Country of Bean Origin, Specific Bean Origin or name of bar, Percentage of Cocoa within the bar for each chocolate bar
+
+        -   The data also shows which ingredients are used using letters, where B = Beans, S = Sugar, S\* = Sweeteners other than white can or beet sugar, C = Cocoa Butter, V = Vanilla, L = Lecithin, Sa = Salt
+
+        -   Finally, the data shows the rating (which ranges from 1-5, incrementing by 0.25) given under their rating system, which is linked above, as well as the date it was reviewed on 
+
+-   Description of how the data was originally collected (not how you found the data but how the original curator of the data collected it).
+
+    -   Data is being continuously collected and added to the dataset after reviewing chocolate bars - this can be seen as the first review years for chocolate bars began in 2006 and have continued until 2021
+
+The data is collected by members of the Manhattan Chocolate Society reviewing chocolate bars using the rating system found at <http://flavorsofcacao.com/review_guide.html> and adding other characteristics about the bar itself
+
 ...
 
 ## Analysis approach
@@ -32,7 +52,7 @@ glimpse(chocolate)
 
     -   Our response variable is the \` rating \` variable. As a summary, the flavors of cacao rating scale is: 
 
-        -   4.0-5.0	 = Outstanding
+        -   4.0-5.0 = Outstanding
 
         -   3.5-3.9= Highly Recommended
 
@@ -47,7 +67,7 @@ glimpse(chocolate)
 ```{r histogram-of-rating}
 
 ggplot(data = chocolate, mapping = aes(x = rating)) + 
-  geom_histogram(binwidth = .5) + 
+  geom_histogram(binwidth = .25) + 
   labs(
   title = "Distribution of Chocolate Ratings",
   x = "Rating",
@@ -66,28 +86,44 @@ summary_stats <- chocolate %>%
 summary_stats %>%
   kable()
 
+chocolate %>%
+  count(rating)
+
 ```
 
--   List of variables that will be considered as predictors
+-   The distribution is left skewed. Therefore, the median and IQR would be a better estimate of its center and spread.
 
-    -   Variables that we will consider as predictors include:
+    <div>
 
-        -   country_of_bean_origin
+    -   List of variables that will be considered as predictors
 
-            -   It would be interesting to understand whether beans produced in Asia or South America tend to result in differing chocolate ratings	
+        -   Variables that we will consider as predictors include:
 
-        -   company_location	
+            -   country_of_bean_origin
 
-            -   We think there could be an association between company locating and rating, specifically European based companies having higher chocolate
+                -   It would be interesting to understand whether beans produced in Asia or South America tend to result in differing chocolate ratings  
 
-        -   cocoa_percent	
+            -   company_location  
 
-            -   Do the Manhattan Chocolate Society members favor milkier chocolates (with lower cocoa percents) over darker chocolates? Due to evolution, humans tend to prefer milkier and sugarier food items, so it would be interesting to see if a lower cocoa percent is linked to a higher rating.
+                -   We think there could be an association between company locating and rating, specifically European based companies having higher chocolate
 
-        -   ingredients
+                -   We could mutate this variable to tell us the continent the company is located in. 
 
-            -   Does an increase in the number of ingredients translate to a higher chocolate rating?
-                ...
+            -   cocoa_percent  
+
+                -   Do the Manhattan Chocolate Society members favor milkier chocolates (with lowercocoa percents) over darker  chocolates? Due to evolution, humans tend to prefer milkier and sugarier food items, so it would be interesting to see if a lower cocoa percent is linked to a higher rating.
+
+            -   ingredients
+
+                -   Does a decrease in the number of ingredients translate to a higher chocolate rating?
+
+            -   Note: most memorable rating
+
+                -   it would be cool to see if for each rating if a specific memorable rating keyword comes up often
+
+                -   Is there a way to group roast and smoke in the same category? Or berry and fruity? Or peanut buttery and nutty?
+
+    </div>
 
 ## Data dictionary
 
