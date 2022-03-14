@@ -11,6 +11,7 @@ editor: visual
 #| warning: false
 library(tidyverse)
 library(tidymodels)
+library(kableExtra)
 
 chocolate <- read_csv("../data/chocolate.csv")
 
@@ -27,7 +28,66 @@ glimpse(chocolate)
 
 ## Analysis approach
 
-...
+-   Description of the response variable.
+
+    -   Our response variable is the \` rating \` variable. As a summary, the flavors of cacao rating scale is: 
+
+        -   4.0-5.0	 = Outstanding
+
+        -   3.5-3.9= Highly Recommended
+
+        -   3.0-3.49= Recommended
+
+        -   2.0-2.9= Disappointing
+
+        -   1.0-1.9= Unpleasant
+
+-   Visualization and summary statistics for the response variable.
+
+```{r histogram-of-rating}
+
+ggplot(data = chocolate, mapping = aes(x = rating)) + 
+  geom_histogram(binwidth = .5) + 
+  labs(
+  title = "Distribution of Chocolate Ratings",
+  x = "Rating",
+  y = "Count"
+)
+
+summary_stats <- chocolate %>%
+  summarize(
+    mean_rating = mean(rating),
+    sd_rating = sd(rating),
+    median_rating = median(rating),
+    iqr_rating = IQR(rating)
+  )
+  
+  
+summary_stats %>%
+  kable()
+
+```
+
+-   List of variables that will be considered as predictors
+
+    -   Variables that we will consider as predictors include:
+
+        -   country_of_bean_origin
+
+            -   It would be interesting to understand whether beans produced in Asia or South America tend to result in differing chocolate ratings	
+
+        -   company_location	
+
+            -   We think there could be an association between company locating and rating, specifically European based companies having higher chocolate
+
+        -   cocoa_percent	
+
+            -   Do the Manhattan Chocolate Society members favor milkier chocolates (with lower cocoa percents) over darker chocolates? Due to evolution, humans tend to prefer milkier and sugarier food items, so it would be interesting to see if a lower cocoa percent is linked to a higher rating.
+
+        -   ingredients
+
+            -   Does an increase in the number of ingredients translate to a higher chocolate rating?
+                ...
 
 ## Data dictionary
 
