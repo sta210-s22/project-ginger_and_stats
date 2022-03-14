@@ -1,7 +1,7 @@
 ---
 title: "Proposal"
 subtitle: "STA 210 - Project"
-author: "Team name - Team member 1, Team member 2, Team member 3, Team member 4"
+author: "Ginger and Stats - Aimy Wen, Rakshita Ramakrisna, Nathan Nguyen, Bryan Pan"
 format: pdf
 editor: visual
 ---
@@ -12,7 +12,9 @@ editor: visual
 library(tidyverse)
 library(tidymodels)
 
-#mydata <- read_csv(here::here("data", "mydata.csv"))
+chocolate <- read_csv("../data/chocolate.csv")
+
+glimpse(chocolate)
 ```
 
 ## Introduction
@@ -29,4 +31,4 @@ library(tidymodels)
 
 ## Data dictionary
 
-The data dictionary can be found [here](ADD LINK!!!).
+The data dictionary can be found [here](ADD%20LINK!!!).
