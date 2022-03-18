@@ -47,25 +47,25 @@ Citations:
 
 ## Data description
 
--   Description of the observations in the data set
+-   Description of the observations in the data set:
 
     -   The observations in this data set represent a review of general characteristics for different chocolate bars. A single observation in this data set represents a single chocolate bar.
 
     -   The general characteristics are as follows:
 
-        -   Company (Manufacturer) lists who made the chocolate bar reviewed; the dataset also lists where this company is located under Company Location
+        -   Company (Manufacturer) lists who made the chocolate bar reviewed; the dataset also lists where this company is located under Company Location.
 
-        -   The dataset characterizes the Country of Bean Origin, Specific Bean Origin or name of bar, Percentage of Cocoa within the bar for each chocolate bar
+        -   The dataset characterizes the Country of Bean Origin, Specific Bean Origin or name of bar, Percentage of Cocoa within the bar for each chocolate bar.
 
-        -   The data also shows which ingredients are used using letters, where B = Beans, S = Sugar, S\* = Sweeteners other than white can or beet sugar, C = Cocoa Butter, V = Vanilla, L = Lecithin, Sa = Salt
+        -   The data also shows which ingredients are used using letters, where B = Beans, S = Sugar, S\* = Sweeteners other than white can or beet sugar, C = Cocoa Butter, V = Vanilla, L = Lecithin, Sa = Salt.
 
         -   Finally, the data shows the rating (which ranges from 1-5, incrementing by 0.25) given under their rating system, which is linked above, as well as the date it was reviewed on 
 
 -   Description of how the data was originally collected (not how you found the data but how the original curator of the data collected it).
 
-    -   Data is being continuously collected and added to the dataset after reviewing chocolate bars - this can be seen as the first review years for chocolate bars began in 2006 and have continued until 2021
+    -   Data is being continuously collected and added to the dataset after reviewing chocolate bars - this can be seen as the first review years for chocolate bars began in 2006 and have continued until 2021.
 
-The data is collected by members of the Manhattan Chocolate Society reviewing chocolate bars using the rating system found at <http://flavorsofcacao.com/review_guide.html> and adding other characteristics about the bar itself
+The data is collected by members of the Manhattan Chocolate Society reviewing chocolate bars using the rating system found at <http://flavorsofcacao.com/review_guide.html> and adding other characteristics about the bar itself.
 
 ...
 
@@ -153,3 +153,6 @@ chocolate %>%
 ## Data dictionary
 
 The data dictionary can be found [here](https://github.com/sta210-s22/project-ginger_and_stats/tree/main/data).
+
+Explicitly, one can copy and paste the this link
+[https://github.com/sta210-s22/project-ginger_and_stats/tree/main/data](https://github.com/sta210-s22/project-ginger_and_stats/tree/main/data)

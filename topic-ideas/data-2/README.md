@@ -1,10 +1,8 @@
 # data
 
-Place data file(s) in this folder.
+Data is being continuously collected and added to the dataset after reviewing chocolate bars - this can be seen as the first review years for chocolate bars began in 2006 and have continued until 2021.
 
-Then, include metadata about your dataset including information on provenance, codebook, etc.
-
-The codebook for your data file(s) using the following format.
+The data is collected by members of the Manhattan Chocolate Society reviewing chocolate bars using the rating system found at <http://flavorsofcacao.com/review_guide.html> and adding other characteristics about the bar itself.
 
 ## name of data file
 
