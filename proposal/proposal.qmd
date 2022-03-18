@@ -95,36 +95,34 @@ chocolate %>%
 
     <div>
 
-    -   List of variables that will be considered as predictors
+    List of variables that will be considered as predictors:
 
-        -   Variables that we will consider as predictors include:
+    -   `country_of_bean_origin`
 
-            -   country_of_bean_origin
+        -   It would be interesting to understand whether beans produced in Asia or South America tend to result in differing chocolate ratings
 
-                -   It would be interesting to understand whether beans produced in Asia or South America tend to result in differing chocolate ratings  
+    -   `company_location`
 
-            -   company_location  
+        -   We think there could be an association between company locating and rating, specifically European based companies having higher chocolate
 
-                -   We think there could be an association between company locating and rating, specifically European based companies having higher chocolate
+        -   We could mutate this variable to tell us the continent the company is located in.
 
-                -   We could mutate this variable to tell us the continent the company is located in. 
+    -   `cocoa_percent`
 
-            -   cocoa_percent  
+        -   Do the Manhattan Chocolate Society members favor milkier chocolates (with lowercocoa percents) over darker  chocolates? Due to evolution, humans tend to prefer milkier and sugarier food items, so it would be interesting to see if a lower cocoa percent is linked to a higher rating.
 
-                -   Do the Manhattan Chocolate Society members favor milkier chocolates (with lowercocoa percents) over darker  chocolates? Due to evolution, humans tend to prefer milkier and sugarier food items, so it would be interesting to see if a lower cocoa percent is linked to a higher rating.
+    -   `ingredients`
 
-            -   ingredients
+        -   Does a decrease in the number of ingredients translate to a higher chocolate rating?
 
-                -   Does a decrease in the number of ingredients translate to a higher chocolate rating?
+    -   Note: most memorable rating
 
-            -   Note: most memorable rating
+        -   it would be cool to see if for each rating if a specific memorable rating keyword comes up often
 
-                -   it would be cool to see if for each rating if a specific memorable rating keyword comes up often
-
-                -   Is there a way to group roast and smoke in the same category? Or berry and fruity? Or peanut buttery and nutty?
+        -   Is there a way to group roast and smoke in the same category? Or berry and fruity? Or peanut buttery and nutty?
 
     </div>
 
 ## Data dictionary
 
-The data dictionary can be found [here](ADD%20LINK!!!).
+The data dictionary can be found [here](https://github.com/sta210-s22/project-ginger_and_stats/tree/main/data).
