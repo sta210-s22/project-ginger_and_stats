@@ -20,6 +20,29 @@ glimpse(chocolate)
 
 ## Introduction
 
+Chocolate is one of the most popular sweets in the world-- according to the World Cocoa Foundation, more than 3 million tons of cocoa beans a year are consumed. Dark chocolate, which this dataset focuses on, has been linked to increase heart health, balance the immune system, combat diabetes, improve brain function, boost athletic performance, and reduce stress (1). While dark chocolate can be helpful to human health, arguably, its popularity is due to its taste and its ability to make us "feel good."  Studies have found that the ability to make us "feel good" is due to the psychoactive chemicals it contains (2). For serious chocolate lovers, chocolate's particular chemical signature can be needed by chocolate lovers' metabolic systems, thus making the treat particularly delicious to them (3).  But other than the chemical compounds in chocolate, how does taste impact chocolate's likeability? What other factors can impact chocolate's likeability? Our dataset contains different dark chocolate bars. One of the columns is chocolate ratings, which are made by members of the Manhattan Chocolate Society. Using the chocolate rating as an indication of the chocolate's likeability, our general research question, therefore, is what can predict chocolate ratings? 
+
+\
+
+Based on our research question, we have the following hypotheses:
+
+1.  A lower cocoa percentage is linked to a higher rating. 
+
+2.  Chocolate companies that are located in the USA or a European country will have higher ratings. 
+
+3.  Cocoa percentage and ingredients are the strongest predictors. 
+
+4.  Country of bean origin will not be a strong predictor. 
+
+\
+Citations:
+
+1.  <https://www.hopkinsmedicine.org/health/wellness-and-prevention/the-benefits-of-having-a-healthy-relationship-with-chocolate>
+
+2.  https://www.bbc.com/news/health-39067088
+
+3.  <https://www.acs.org/content/acs/en/pressroom/newsreleases/2007/october/news-release-study-finds-that-people-are-programmed-to-love-chocolate.html>
+
 ...
 
 ## Data description
@@ -91,7 +114,7 @@ chocolate %>%
 
 ```
 
--   The distribution is left skewed. Therefore, the median and IQR would be a better estimate of its center and spread.
+-   The distribution is left-skewed. Therefore, the median and IQR would be a better estimate of its center, (centered around a 3.25 rating) and spread (the distribution has a spread of 0.5 rating points).
 
     <div>
 
@@ -103,25 +126,29 @@ chocolate %>%
 
     -   `company_location`
 
-        -   We think there could be an association between company locating and rating, specifically European based companies having higher chocolate
+        -   We think there could be an association between company locating and rating, specifically European based companies having higher chocolate ratings
 
         -   We could mutate this variable to tell us the continent the company is located in.
 
     -   `cocoa_percent`
 
-        -   Do the Manhattan Chocolate Society members favor milkier chocolates (with lowercocoa percents) over darker  chocolates? Due to evolution, humans tend to prefer milkier and sugarier food items, so it would be interesting to see if a lower cocoa percent is linked to a higher rating.
+        -   Do the Manhattan Chocolate Society members favor milkier chocolates (with lower cocoa percentages) over darker chocolates? Due to evolution, humans tend to prefer milkier and sugarier food items, so it would be interesting to see if a lower cocoa percent is linked to a higher rating.
 
     -   `ingredients`
 
         -   Does a decrease in the number of ingredients translate to a higher chocolate rating?
 
-    -   Note: most memorable rating
+    -   We would also be interested in exploring the most memorable rating
 
         -   it would be cool to see if for each rating if a specific memorable rating keyword comes up often
 
         -   Is there a way to group roast and smoke in the same category? Or berry and fruity? Or peanut buttery and nutty?
 
     </div>
+
+-   Regression model technique (multiple linear regression and logistic regression)
+
+    -   We plan to use multiple linear regression for our data analysis as our response variable that we are measuring (rating) is not binary, and since overall none of our variables in the dataset are binary.
 
 ## Data dictionary
 
