@@ -155,7 +155,7 @@ chocolate %>%
 The data dictionary can be found [here](https://github.com/sta210-s22/project-ginger_and_stats/tree/main/data).
 
 |variable         |description |
-|:----------------|:-----------|
+|:-------------|:-------------------|
 |`ref`        | Reference ID, the highest REF numbers were the last entries made  |
 |`company_manufacture`        | Manufacturer name |
 |`company_location`       | Manufacturer region |
