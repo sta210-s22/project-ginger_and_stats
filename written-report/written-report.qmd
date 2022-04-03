@@ -1,7 +1,7 @@
 ---
-title: "Proposal"
+title: "Draft"
 subtitle: "STA 210 - Project"
-author: "Team name - Team member 1, Team member 2, Team member 3, Team member 4"
+author: "Ginger and Stats - Aimy Wen, Rakshita Ramakrisna, Nathan Nguyen"
 format: pdf
 editor: visual
 ---
@@ -11,22 +11,63 @@ editor: visual
 #| warning: false
 library(tidyverse)
 library(tidymodels)
+library(tidytext)
 
-#mydata <- read_csv(here::here("data", "mydata.csv"))
+chocolate <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-01-18/chocolate.csv')
 ```
 
-## Introduction
+# Exploratory Data Analysis
 
 ...
 
-## Data description
+## Shape of Ratings (already done)
 
 ...
 
-## Analysis approach
+## Cocoa Percent (Aimi)
 
-...
+```{r}
+#| label: cocoa-percent
 
-## Data dictionary
+chocolate$cocoa_percent <- as.numeric(gsub('[,%]', '', chocolate$cocoa_percent))
 
-The data dictionary can be found [here](ADD LINK!!!).
+chocolate$rating <- as.character(chocolate$rating) 
+
+ggplot(data= chocolate, aes(x= cocoa_percent)) + geom_histogram() 
+
+ggplot(data= chocolate, aes(x= cocoa_percent, y= rating)) + geom_boxplot()
+
+chocolate$rating <- as.numeric(chocolate$rating) 
+
+
+```
+
+## Ingredients (Nathan)
+
+## Most Memorable Characteristic (Aimi)
+
+```{r}
+#| label: memorable-char
+
+tidy_chocolate<- chocolate %>% unnest_tokens(word, most_memorable_characteristics)
+
+tidy_chocolate %>% 
+  group_by(word) %>% 
+  summarize( n= n(), 
+             rating= mean(rating) ) %>%
+  ggplot(aes(n, rating)) + 
+  geom_hline(yintercept= mean(chocolate$rating)) + 
+  geom_jitter(color= "blue", alpha= 0.5) + 
+  geom_text(aes(label= word),
+            check_overlap= TRUE, 
+            family= "IBMPlexSans", 
+            vjust= "top", 
+            hjust= "left") +
+  scale_x_log10() 
+```
+
+## Country Bean of Origin vs Specific Bean Origin (Rakshita)
+
+## Company Location (Rakshita)
+
+## Review Date (Nathan)
