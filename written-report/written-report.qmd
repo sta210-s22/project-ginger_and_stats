@@ -13,6 +13,11 @@ library(tidyverse)
 library(tidymodels)
 library(tidytext)
 
+library(ggplot2)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+
 chocolate <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-01-18/chocolate.csv')
 ```
 
@@ -66,8 +71,54 @@ tidy_chocolate %>%
   scale_x_log10() 
 ```
 
-## Country Bean of Origin vs Specific Bean Origin (Rakshita)
+## Country Bean of Origin (Rakshita)
+
+```{r}
+#| label: country-bean-of-origin
+
+chocolate_modified <- chocolate %>%
+  mutate(name_long = country_of_bean_origin) %>%
+  group_by(name_long) %>%
+  count(name_long)
+
+chocworld_data <- world %>%
+  full_join(y = chocolate_modified,
+  by = "name_long") %>%
+  mutate(numBars = ifelse(is.na(n), 0, n))
+
+ggplot(data = chocworld_data) +
+  scale_fill_gradient(low = "#F0FEFB", high = "#044F3F") +
+  geom_sf(aes(fill = numBars, geometry = geometry)) +
+  labs(title = "Map of countries where cacao beans were produced")
+```
 
 ## Company Location (Rakshita)
+
+```{r}
+#| label: country-location
+
+chocolate_modified2 <- chocolate %>%
+  mutate(name_long = case_when(
+    company_location == "U.S.A." ~ "United States",
+    company_location == "U.K." ~ "United Kingdom",
+    company_location == company_location ~ company_location)) %>%
+  group_by(name_long) %>%
+  count(name_long)
+         
+chocworld_data1 <- world %>%
+  full_join(y = chocolate_modified2,
+  by = "name_long") %>%
+  mutate(numBars = ifelse(is.na(n), 0, n))
+
+ggplot(data = chocworld_data1) +
+  scale_fill_gradient(low = "#ffffff", high = "#044F3F") +
+  geom_sf(aes(fill = numBars, geometry = geometry)) +
+  labs(title = "Map of countries where companies are located")
+
+chocolate %>%
+    count(company_location, sort = TRUE)
+
+
+```
 
 ## Review Date (Nathan)
