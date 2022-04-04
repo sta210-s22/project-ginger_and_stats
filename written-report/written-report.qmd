@@ -1,7 +1,7 @@
 ---
 title: "Proposal"
 subtitle: "STA 210 - Project"
-author: "Team name - Team member 1, Team member 2, Team member 3, Team member 4"
+author: "Ginger and Stats - Aimi Wen, Rakshita Ramakrishna, Nathan Nguyen"
 format: pdf
 editor: visual
 ---
@@ -12,21 +12,49 @@ editor: visual
 library(tidyverse)
 library(tidymodels)
 
-#mydata <- read_csv(here::here("data", "mydata.csv"))
+chocolate <- read_csv("../data/chocolate.csv")
 ```
 
 ## Introduction
 
-...
-
 ## Data description
-
-...
 
 ## Analysis approach
 
-...
+```{r}
+chocolate <- chocolate %>%
+  mutate(lecithin = case_when(
+    grepl("L", ingredients) ~ 1,
+    T ~ 0
+  ),
+  vanilla = case_when(
+    grepl("V", ingredients) ~ 1,
+    T ~ 0
+  ),
+  cocoa = case_when(
+    grepl("C", ingredients) ~ 1,
+    T ~ 0
+  ),
+  salt = case_when(
+    grepl("Sa", ingredients) ~ 1,
+    T ~ 0
+  )
+  )
+```
+
+```{r}
+chocolate %>%
+  filter(grepl("*", ingredients)) %>%
+  select(ingredients)
+```
+
+```{r}
+chocolate %>%
+  drop_na(
+    ingredients
+  )
+```
 
 ## Data dictionary
 
-The data dictionary can be found [here](ADD LINK!!!).
+The data dictionary can be found [here](ADD%20LINK!!!).
