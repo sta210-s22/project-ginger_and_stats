@@ -1,7 +1,7 @@
 ---
 title: "Draft"
 subtitle: "STA 210 - Project"
-author: "Ginger and Stats - Aimy Wen, Rakshita Ramakrisna, Nathan Nguyen"
+author: "Ginger and Stats - Aimi Wen, Rakshita Ramakrishna, Nathan Nguyen"
 format: pdf
 editor: visual
 ---
@@ -12,18 +12,15 @@ editor: visual
 library(tidyverse)
 library(tidymodels)
 library(tidytext)
+library(patchwork)
+library(stringr)
 
-library(ggplot2)
-library(sf)
-library(rnaturalearth)
-library(rnaturalearthdata)
-
-chocolate <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-01-18/chocolate.csv')
 ```
 
 # Exploratory Data Analysis
+## Data description
 
-...
+## Analysis approach
 
 ## Shape of Ratings (already done)
 
@@ -43,18 +40,81 @@ ggplot(data= chocolate, aes(x= cocoa_percent)) + geom_histogram()
 ggplot(data= chocolate, aes(x= cocoa_percent, y= rating)) + geom_boxplot()
 
 chocolate$rating <- as.numeric(chocolate$rating) 
-
-
 ```
 
 ## Ingredients (Nathan)
+
+```{r}
+chocolate <- chocolate %>%
+  mutate(lecithin = case_when(
+    grepl("L", ingredients) ~ 1,
+    T ~ 0
+  ),
+  vanilla = case_when(
+    grepl("V", ingredients) ~ 1,
+    T ~ 0
+  ),
+  cocoa = case_when(
+    grepl("C", ingredients) ~ 1,
+    T ~ 0
+  ),
+  salt = case_when(
+    grepl("Sa", ingredients) ~ 1,
+    T ~ 0
+  ),
+  
+  lecithin = as.factor(lecithin),
+  vanilla = as.factor(vanilla),
+  cocoa = as.factor(cocoa),
+  salt = as.factor(salt)
+  )
+```
+
+```{r}
+pL <- ggplot(chocolate, aes(lecithin)) +
+  geom_bar()
+pV <- ggplot(chocolate, aes(vanilla)) +
+  geom_bar()
+pC <- ggplot(chocolate, aes(cocoa)) +
+  geom_bar()
+pSa <- ggplot(chocolate, aes(salt)) +
+  geom_bar()
+
+(pL + pV)/(pC + pSa)
+
+```
+
+```{r}
+chocolate <- chocolate %>%
+  mutate(
+    num_ingres = if_else(is.na(ingredients), "0", str_sub(ingredients, 1, 1))
+  )
+```
+
+
+```{r}
+chocolate %>%
+  drop_na(
+    ingredients
+  ) %>%
+  count()
+```
+```{r}
+ggplot(chocolate, aes(num_ingres))+
+  geom_bar()+
+  labs(
+    title = "Distribution of number of ingredients",
+    x = "Number of ingredients"
+  )
+```
 
 ## Most Memorable Characteristic (Aimi)
 
 ```{r}
 #| label: memorable-char
 
-tidy_chocolate<- chocolate %>% unnest_tokens(word, most_memorable_characteristics)
+tidy_chocolate<- chocolate %>% 
+  unnest_tokens(word, most_memorable_characteristics)
 
 tidy_chocolate %>% 
   group_by(word) %>% 
@@ -65,7 +125,6 @@ tidy_chocolate %>%
   geom_jitter(color= "blue", alpha= 0.5) + 
   geom_text(aes(label= word),
             check_overlap= TRUE, 
-            family= "IBMPlexSans", 
             vjust= "top", 
             hjust= "left") +
   scale_x_log10() 
@@ -122,3 +181,40 @@ chocolate %>%
 ```
 
 ## Review Date (Nathan)
+
+```{r}
+ggplot(chocolate, aes(review_date))+
+  geom_bar()
+```
+
+```{r}
+#| label: review date statistics
+
+# statistics of review dates
+
+chocolate %>%
+  summarise(mean = mean(review_date),
+            median = median(review_date),
+            sd = sd(review_date))
+```
+```{r}
+#review date vs cocoa_percent and ratings
+
+chocolate <- chocolate %>%
+  mutate(
+    date_fct = as.factor(review_date)
+  )
+
+ggplot(chocolate, aes(date_fct, cocoa_percent))+
+  geom_boxplot()+
+  coord_flip()
+
+ggplot(chocolate, aes(date_fct, fill = as.factor(rating)))+
+  geom_bar(position = "fill")+
+  coord_flip()+
+  scale_fill_viridis_d()
+```
+
+# Data
+
+The data dictionary can be found [here](ADD%20LINK!!!).
