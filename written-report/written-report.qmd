@@ -109,7 +109,6 @@ ggplot(chocolate, aes(num_ingres))+
   )
 ```
 
-
 ## Most Memorable Characteristic (Aimi)
 
 ```{r}
@@ -136,8 +135,41 @@ tidy_chocolate %>%
 
 ## Company Location (Rakshita)
 
-The data dictionary can be found [here](ADD%20LINK!!!).
-
 ## Review Date (Nathan)
 
+```{r}
+ggplot(chocolate, aes(review_date))+
+  geom_bar()
+```
 
+```{r}
+#| label: review date statistics
+
+# statistics of review dates
+
+chocolate %>%
+  summarise(mean = mean(review_date),
+            median = median(review_date),
+            sd = sd(review_date))
+```
+```{r}
+#review date vs cocoa_percent and ratings
+
+chocolate <- chocolate %>%
+  mutate(
+    date_fct = as.factor(review_date)
+  )
+
+ggplot(chocolate, aes(date_fct, cocoa_percent))+
+  geom_boxplot()+
+  coord_flip()
+
+ggplot(chocolate, aes(date_fct, fill = as.factor(rating)))+
+  geom_bar(position = "fill")+
+  coord_flip()+
+  scale_fill_viridis_d()
+```
+
+# Data
+
+The data dictionary can be found [here](ADD%20LINK!!!).
