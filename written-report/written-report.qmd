@@ -15,6 +15,14 @@ library(tidytext)
 library(patchwork)
 library(stringr)
 
+
+library(ggplot2)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+chocolate <- read_csv("../data/chocolate.csv")
+
+
 ```
 
 # Exploratory Data Analysis
