@@ -72,14 +72,17 @@ chocolate <- chocolate %>%
 ```
 
 ```{r}
-pL <- ggplot(chocolate, aes(lecithin)) +
-  geom_bar()
-pV <- ggplot(chocolate, aes(vanilla)) +
-  geom_bar()
-pC <- ggplot(chocolate, aes(cocoa)) +
-  geom_bar()
-pSa <- ggplot(chocolate, aes(salt)) +
-  geom_bar()
+pL <- ggplot(chocolate, aes(lecithin, fill = as.factor(rating))) +
+  geom_bar(position = "fill")+
+  theme(legend.position = "none")
+pV <- ggplot(chocolate, aes(vanilla, fill = as.factor(rating))) +
+  geom_bar(position = "fill")+
+  theme(legend.position = "none")
+pC <- ggplot(chocolate, aes(cocoa, fill = as.factor(rating))) +
+  geom_bar(position = "fill")+
+  theme(legend.position = "none")
+pSa <- ggplot(chocolate, aes(salt, fill = as.factor(rating))) +
+  geom_bar(position = "fill")
 
 (pL + pV)/(pC + pSa)
 
