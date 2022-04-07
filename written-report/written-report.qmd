@@ -232,7 +232,7 @@ ggplot(chocolate, aes(date_fct, fill = as.factor(rating)))+
 ```{r}
 #| label: most-memorable-cleaning
 
-chocolate <- chocolate %>%
+chocolate_clean <- chocolate %>%
   separate(most_memorable_characteristics, sep= ",", into= c("most_memorable", "other_memorable"), extra= "merge") %>%
   select(-other_memorable) 
 
@@ -240,7 +240,7 @@ chocolate <- chocolate %>%
 ```
 
 ```{r}
-chocolate %>%
+chocolate_clean %>%
   count(most_memorable, sort= TRUE)
 ```
 
