@@ -22,6 +22,7 @@ library(rnaturalearth)
 library(rnaturalearthdata)
 chocolate <- read_csv("../data/chocolate.csv")
 
+world <- ne_countries(scale = "medium", returnclass = "sf")
 
 ```
 
