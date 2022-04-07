@@ -27,6 +27,7 @@ world <- ne_countries(scale = "medium", returnclass = "sf")
 ```
 
 # Exploratory Data Analysis
+
 ## Data description
 
 ## Analysis approach
@@ -103,7 +104,6 @@ chocolate <- chocolate %>%
   )
 ```
 
-
 ```{r}
 chocolate %>%
   drop_na(
@@ -111,6 +111,7 @@ chocolate %>%
   ) %>%
   count()
 ```
+
 ```{r}
 ggplot(chocolate, aes(num_ingres))+
   geom_bar()+
@@ -209,6 +210,7 @@ chocolate %>%
             median = median(review_date),
             sd = sd(review_date))
 ```
+
 ```{r}
 #review date vs cocoa_percent and ratings
 
@@ -225,6 +227,21 @@ ggplot(chocolate, aes(date_fct, fill = as.factor(rating)))+
   geom_bar(position = "fill")+
   coord_flip()+
   scale_fill_viridis_d()
+```
+
+```{r}
+#| label: most-memorable-cleaning
+
+chocolate <- chocolate %>%
+  separate(most_memorable_characteristics, sep= ",", into= c("most_memorable", "other_memorable"), extra= "merge") %>%
+  select(-other_memorable) 
+
+
+```
+
+```{r}
+chocolate %>%
+  count(most_memorable, sort= TRUE)
 ```
 
 # Data
