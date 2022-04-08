@@ -26,6 +26,10 @@ world <- ne_countries(scale = "medium", returnclass = "sf")
 
 ```
 
+```{r}
+library(countrycode)
+```
+
 # Exploratory Data Analysis
 
 ## Data description
@@ -240,8 +244,117 @@ chocolate_clean <- chocolate %>%
 ```
 
 ```{r}
-chocolate_clean %>%
-  count(most_memorable, sort= TRUE)
+#|label: cleaning-dataset
+chocolate_clean <- chocolate_clean %>%
+  mutate(
+    top_memorable= case_when(
+      str_detect(most_memorable, "cream") ~ "fatty_smooth", 
+      str_detect(most_memorable, "fatty") ~ "fatty_smooth", 
+      str_detect(most_memorable, "smooth") ~ "fatty_smooth", 
+      str_detect(most_memorable, "dairy") ~ "fatty_smooth", 
+      str_detect(most_memorable, "roast") ~ "roast", 
+      str_detect(most_memorable, "earth") ~ "roast", 
+      str_detect(most_memorable, "smoke") ~ "roast", 
+      str_detect(most_memorable, "wood") ~ "roast", 
+      str_detect(most_memorable, "bitter") ~ "roast", 
+      str_detect(most_memorable, "intense") ~ "strong_sweet", 
+      str_detect(most_memorable, "sweet") ~ "strong_sweet", 
+      str_detect(most_memorable, "cocoa") ~ "strong_sweet", 
+      str_detect(most_memorable, "caramel") ~ "strong_sweet", 
+      str_detect(most_memorable, "brownie")~ "strong_sweet", 
+      str_detect(most_memorable, "sandy") ~ "rough_texture", 
+      str_detect(most_memorable, "dry") ~ "rough_texture", 
+      str_detect(most_memorable, "gritty") ~ "rough_texture", 
+      str_detect(most_memorable, "coarse") ~ "rough_texture", 
+      str_detect(most_memorable, "chalky") ~ "rough_texture", 
+      str_detect(most_memorable, "powdery") ~ "rough_texture", 
+      str_detect(most_memorable, "nut") ~ "nutty", 
+      str_detect(most_memorable, "sticky") ~ "greasy", 
+      str_detect(most_memorable, "oily") ~ "greasy", 
+      str_detect(most_memorable, "spic") ~ "spiced", 
+      str_detect(most_memorable, "molasses") ~ "spiced", 
+      str_detect(most_memorable, "floral") ~ "floral", 
+      str_detect(most_memorable, "grassy") ~ "floral", 
+      str_detect(most_memorable, "vanilla") ~ "floral", 
+      str_detect(most_memorable, "fruit") ~ "fruity", 
+      str_detect(most_memorable, "tart") ~ "fruity", 
+      str_detect(most_memorable, "banana") ~ "fruity", 
+      str_detect(most_memorable, "berry") ~ "fruity", 
+      str_detect(most_memorable, "berries") ~ "fruity", 
+      str_detect(most_memorable, "citrus") ~ "fruity", 
+      str_detect(most_memorable, "lemon") ~ "fruity", 
+      str_detect(most_memorable, "complex") ~ "complex", 
+      TRUE ~ "other"
+    )
+  )
+
+```
+
+```{r}
+#| label: clean_bean_origin
+chocolate_clean$continent_bean <- countrycode(sourcevar= chocolate_clean[["country_of_bean_origin"]],origin= "country.name", 
+                                              destination= "continent")
+
+```
+
+```{r}
+#| label: bean_origin_clean_more
+chocolate_clean <- chocolate_clean %>%
+  mutate(continent_bean= ifelse(
+    country_of_bean_origin== "U.S.A.", "North America", continent_bean
+  )) 
+
+chocolate_clean <- chocolate_clean %>%
+  mutate(continent_bean= ifelse(
+    continent_bean== "Americas", "South America", continent_bean
+  ))
+```
+
+```{r}
+#| label: finalizing_bean_clean
+
+chocolate_clean <- chocolate_clean %>%
+  mutate(continent_bean= case_when(
+    continent_bean== "South America" ~ "South America", 
+    continent_bean== "Africa" ~ "Africa", 
+    continent_bean== "Asia" ~ "Asia", 
+    TRUE ~ "Other"
+  ))
+
+```
+
+```{r}
+#| label: clean_company
+
+chocolate_clean$continent_company <- countrycode(sourcevar= chocolate_clean[["company_location"]],origin= "country.name", 
+                                              destination= "continent")
+
+```
+
+```{r}
+#| label: clean_company_continual
+
+chocolate_clean <- chocolate_clean %>%
+  mutate(continent_company= ifelse(
+    company_location== "U.S.A.", "North America", continent_company
+  )) %>%
+  mutate(continent_company=ifelse(
+    company_location== "Canada", "North America", continent_company
+  )) %>%
+  mutate(continent_company= ifelse(
+    continent_company== "Americas", "South America", continent_company
+    )
+  )
+```
+
+```{r}
+#| label: final_clean
+chocolate_clean <- chocolate_clean %>%
+  mutate(continent_company= case_when(
+    continent_company== "North America" ~ "North America", 
+    continent_company== "Europe" ~ "Europe", 
+    TRUE ~ "Other"
+  ))
 ```
 
 # Data
