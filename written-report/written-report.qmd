@@ -9,6 +9,7 @@ editor: visual
 ```{r}
 #| label: load-pkg-data
 #| warning: false
+#| 
 library(tidyverse)
 library(tidymodels)
 library(tidytext)
@@ -34,11 +35,29 @@ library(countrycode)
 
 ## Data description
 
-## Analysis approach
+-   Description of the observations in the data set:
+
+    -   The observations in this data set represent a review of general characteristics for different chocolate bars. A single observation in this data set represents a single chocolate bar.
+
+    -   The general characteristics are as follows:
+
+        -   Company (Manufacturer) lists who made the chocolate bar reviewed; the dataset also lists where this company is located under Company Location.
+
+        -   The dataset characterizes the Country of Bean Origin, Specific Bean Origin or name of bar, Percentage of Cocoa within the bar for each chocolate bar.
+
+        -   The data also shows which ingredients are used using letters, where B = Beans, S = Sugar, S\* = Sweeteners other than white can or beet sugar, C = Cocoa Butter, V = Vanilla, L = Lecithin, Sa = Salt.
+
+        -   Finally, the data shows the rating (which ranges from 1-5, incrementing by 0.25) given under their rating system, which is linked above, as well as the date it was reviewed on 
+
+-   Description of how the data was originally collected (not how you found the data but how the original curator of the data collected it).
+
+    -   Data is being continuously collected and added to the dataset after reviewing chocolate bars - this can be seen as the first review years for chocolate bars began in 2006 and have continued until 2021.
+
+The data is collected by members of the Manhattan Chocolate Society reviewing chocolate bars using the rating system found at <http://flavorsofcacao.com/review_guide.html> and adding other characteristics about the bar itself.
 
 ## Shape of Ratings (already done)
 
-...
+
 
 ## Cocoa Percent (Aimi)
 
@@ -104,7 +123,8 @@ pSa <- ggplot(chocolate, aes(salt, fill = as.factor(rating))) +
 ```{r}
 chocolate <- chocolate %>%
   mutate(
-    num_ingres = if_else(is.na(ingredients), "0", str_sub(ingredients, 1, 1))
+    num_ingres = if_else(is.na(ingredients), "0", str_sub(ingredients, 1, 1)),
+    num_ingres = as.numeric(num_ingres)
   )
 ```
 
@@ -118,7 +138,7 @@ chocolate %>%
 
 ```{r}
 ggplot(chocolate, aes(num_ingres))+
-  geom_bar()+
+  geom_histogram(binwidth = 1)+
   labs(
     title = "Distribution of number of ingredients",
     x = "Number of ingredients"
@@ -355,6 +375,26 @@ chocolate_clean <- chocolate_clean %>%
     continent_company== "Europe" ~ "Europe", 
     TRUE ~ "Other"
   ))
+```
+
+## Analysis approach
+
+### Ratings vs cocoa percent, ingredients, most memorable characteristics
+
+```{r}
+choco_fit <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(rating ~ cocoa_percent + vanilla + salt +
+        num_ingres + top_memorable, data = chocolate_clean)
+```
+
+```{r}
+tidy(choco_fit)
+```
+
+```{r}
+glance(choco_fit) %>%
+  select(adj.r.squared, AIC, BIC)
 ```
 
 # Data
