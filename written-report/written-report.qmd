@@ -9,26 +9,20 @@ editor: visual
 ```{r}
 #| label: load-pkg-data
 #| warning: false
-#| 
 library(tidyverse)
 library(tidymodels)
 library(tidytext)
 library(patchwork)
 library(stringr)
-
-
 library(ggplot2)
 library(sf)
 library(rnaturalearth)
 library(rnaturalearthdata)
+library(countrycode)
 chocolate <- read_csv("../data/chocolate.csv")
 
 world <- ne_countries(scale = "medium", returnclass = "sf")
 
-```
-
-```{r}
-library(countrycode)
 ```
 
 # Exploratory Data Analysis
@@ -59,7 +53,7 @@ The data is collected by members of the Manhattan Chocolate Society reviewing ch
 
 
 
-## Cocoa Percent (Aimi)
+## Cocoa Percent 
 
 ```{r}
 #| label: cocoa-percent
@@ -68,18 +62,28 @@ chocolate$cocoa_percent <- as.numeric(gsub('[,%]', '', chocolate$cocoa_percent))
 
 chocolate$rating <- as.character(chocolate$rating) 
 
-ggplot(data= chocolate, aes(x= cocoa_percent)) + geom_histogram() 
+ggplot(data= chocolate, aes(x= cocoa_percent)) + geom_histogram() +
+  labs(title = "Distribution of Cocoa Percent",
+       y = "Count",
+       x = "Cocoa Percent")
 
-ggplot(data= chocolate, aes(x= cocoa_percent, y= rating)) + geom_boxplot()
+ggplot(data= chocolate, aes(x= cocoa_percent, y= rating)) + geom_boxplot() +
+  labs(title = "Distribution of Cocoa Percent versus Chocolate Rating",
+       y = "Rating",
+       x = "Chocolate Rating")
 
 chocolate$rating <- as.numeric(chocolate$rating) 
 ```
-We can see a general rough trend that as the median cocoa percent is lower, the rating of the chocolate bar is higher. Furthermore, there appear to be a lot of outliers in the middle ratings (2.25 - 3.75), which might be due to the fact that that is the rating for the bulk of the chocolates tested.
+From the distribution of cocoa_percent, we see that the distribution is roughly symmetric and unimodal, and centered around 72 percent, and has apparent outliers around 55 percent and 100 percent. 
+
+From the boxplot, we can see a general rough trend that as the median cocoa percent is lower, the rating of the chocolate bar is higher. Furthermore, there appear to be a lot of outliers in the middle ratings (2.25 - 3.75), which might be due to the fact that that is the rating for the bulk of the chocolates tested.
 
 
-## Ingredients (Nathan)
+## Ingredients
 
 ```{r}
+#| label: ingredients-seperate
+
 chocolate <- chocolate %>%
   mutate(lecithin = case_when(
     grepl("L", ingredients) ~ 1,
@@ -106,16 +110,31 @@ chocolate <- chocolate %>%
 ```
 
 ```{r}
+#| label: ingredients-seperate-vis
+
 pL <- ggplot(chocolate, aes(lecithin, fill = as.factor(rating))) +
-  geom_bar(position = "fill")+
+  geom_bar(position = "fill") + 
+  labs(title = "Distribution of Lecithin",
+       y = "Rating",
+       x = "Presence of Lecithin") +
   theme(legend.position = "none")
 pV <- ggplot(chocolate, aes(vanilla, fill = as.factor(rating))) +
-  geom_bar(position = "fill")+
+    labs(title = "Distribution of Vanilla",
+       y = "Rating",
+       x = "Presence of Vanilla") + 
+  geom_bar(position = "fill") +
   theme(legend.position = "none")
 pC <- ggplot(chocolate, aes(cocoa, fill = as.factor(rating))) +
-  geom_bar(position = "fill")+
+  geom_bar(position = "fill") +
+    labs(title = "Distribution of Cocoa Butter",
+       y = "Rating",
+       x = "Presence of Cocoa Butter") + 
   theme(legend.position = "none")
 pSa <- ggplot(chocolate, aes(salt, fill = as.factor(rating))) +
+    labs(title = "Distribution of Salt",
+       y = "Rating",
+       x = "Presence of Salt",
+       fill = "Rating") + 
   geom_bar(position = "fill")
 
 (pL + pV)/(pC + pSa)
@@ -127,27 +146,27 @@ From this visualization, we can see that the presence of salt and vanilla seem t
 
 
 ```{r}
+#| label: num-of-ingredients-variable-and-vis
+
 chocolate <- chocolate %>%
   mutate(
     num_ingres = if_else(is.na(ingredients), "0", str_sub(ingredients, 1, 1)),
     num_ingres = as.numeric(num_ingres)
   )
-```
 
-```{r}
 chocolate %>%
   drop_na(
     ingredients
   ) %>%
   count()
-```
 
-```{r}
+
 ggplot(chocolate, aes(num_ingres))+
   geom_histogram(binwidth = 1)+
   labs(
     title = "Distribution of number of ingredients",
-    x = "Number of ingredients"
+    x = "Number of ingredients", 
+    y = "Count"
   )
 ```
 
@@ -156,7 +175,7 @@ This visualization showcases a right skewed distribution for the number of ingre
 ## Most Memorable Characteristic (Aimi)
 
 ```{r}
-#| label: memorable-char
+#| label: memorable-char-vis
 
 tidy_chocolate<- chocolate %>% 
   unnest_tokens(word, most_memorable_characteristics)
@@ -180,7 +199,7 @@ From this visualization, we can see that the phrases and most memorable characte
 ## Country Bean of Origin (Rakshita)
 
 ```{r}
-#| label: country-bean-of-origin
+#| label: country-bean-of-origin-vis
 
 chocolate_modified <- chocolate %>%
   mutate(name_long = country_of_bean_origin) %>%
@@ -199,10 +218,11 @@ ggplot(data = chocworld_data) +
 ```
 
 This map shows that the majority of cacao beans are produced in central America, South America, Asia, and Africa. 
+
 ## Company Location (Rakshita)
 
 ```{r}
-#| label: country-location
+#| label: company-location-vis
 
 chocolate_modified2 <- chocolate %>%
   mutate(name_long = case_when(
@@ -228,17 +248,25 @@ chocolate %>%
 
 ```
 This map shows that the majority of countries that chocolate companies are located in are concentrated in North America and Europe, and that the US is host to the largest amount of chocolate companies. 
+
 ## Review Date (Nathan)
 
 ```{r}
+#| label: review-date-vis
+
 ggplot(chocolate, aes(review_date))+
-  geom_bar()
+  geom_bar() + 
+  labs(
+    title = "Distribution of Review Date",
+    x = "Year",
+    y = "Count"
+  )
 ```
 
 Here, we can see that the distribution of chocolate bars reviewed over time has a roughly unimodal distribution with a peak around 2015. Furthermore there was a signficant dip in 2020, probably due to the COVID-19 Pandemic, as well as a dip in 2017, due to unknown reasons. The distribution is centered around 2014 and is roughly symmetric.
 
 ```{r}
-#| label: review date statistics
+#| label: review date summary statistics
 
 # statistics of review dates
 
@@ -249,6 +277,8 @@ chocolate %>%
 ```
 
 ```{r}
+#| label: review date summary statistics vis
+
 #review date vs cocoa_percent and ratings
 
 chocolate <- chocolate %>%
@@ -395,17 +425,15 @@ chocolate_clean <- chocolate_clean %>%
 ### Ratings vs cocoa percent, ingredients, most memorable characteristics
 
 ```{r}
+#| label: fitting model
+
 choco_fit <- linear_reg() %>%
   set_engine("lm") %>%
   fit(rating ~ cocoa_percent + vanilla + salt +
         num_ingres + top_memorable, data = chocolate_clean)
-```
 
-```{r}
 tidy(choco_fit)
-```
 
-```{r}
 glance(choco_fit) %>%
   select(adj.r.squared, AIC, BIC)
 ```
@@ -413,6 +441,8 @@ glance(choco_fit) %>%
 ### All predictors
 
 ```{r}
+#| label: fitting full model
+
 choco_fit_full <- linear_reg() %>%
   set_engine("lm") %>%
   fit(rating ~ cocoa_percent + vanilla + salt +
@@ -420,13 +450,11 @@ choco_fit_full <- linear_reg() %>%
       data = chocolate_clean)
 
 tidy(choco_fit_full)
-```
 
-```{r}
 glance(choco_fit_full) %>%
   select(adj.r.squared, AIC, BIC)
 ```
-As both models have similar adjusted r squared values, and AIC and BIC values, due to the goals of parsimony and model consiceseness, we choose to proceed with the first model.
+As both models have similar adjusted r squared values, and AIC and BIC values, due to the goals of parsimony and model conciseness, we choose to proceed with the first model.
 
 
 # Data
