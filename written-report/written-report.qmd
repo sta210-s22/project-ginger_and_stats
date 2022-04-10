@@ -19,6 +19,7 @@ library(sf)
 library(rnaturalearth)
 library(rnaturalearthdata)
 library(countrycode)
+library(kableExtra)
 chocolate <- read_csv("../data/chocolate.csv")
 
 world <- ne_countries(scale = "medium", returnclass = "sf")
@@ -424,37 +425,96 @@ chocolate_clean <- chocolate_clean %>%
 
 ### Ratings vs cocoa percent, ingredients, most memorable characteristics
 
+
 ```{r}
-#| label: fitting model
+#| label: inital-split
 
-choco_fit <- linear_reg() %>%
-  set_engine("lm") %>%
-  fit(rating ~ cocoa_percent + vanilla + salt +
-        num_ingres + top_memorable, data = chocolate_clean)
+set.seed(2100)
+choco_split <- initial_split(chocolate_clean)
+choco_training <- training(choco_split)
+choco_testing <- testing(choco_split)
 
-tidy(choco_fit)
+choco_spec <- linear_reg() %>%
+  set_engine("lm")
 
-glance(choco_fit) %>%
-  select(adj.r.squared, AIC, BIC)
+choco_rec1 <- recipe(rating ~ cocoa_percent + vanilla + salt + num_ingres + top_memorable, data = choco_training) %>%
+  step_center(num_ingres, cocoa_percent) %>%
+  step_dummy(all_nominal_predictors()) %>%
+  step_zv(all_predictors())
+
+choco_wflow1 <- workflow() %>%
+  add_model(choco_spec) %>%
+  add_recipe(choco_rec1)
+
+set.seed(2500)
+choco_folds <- vfold_cv(choco_training, v = 5)
+choco_fit_rs1 <- choco_wflow1 %>%
+  fit_resamples(choco_folds)
+
+cv_metrics1 <- collect_metrics(choco_fit_rs1, summarize = FALSE)
+
+cv_metrics1 %>%
+  mutate(.estimate = round(.estimate, 3)) %>%
+  pivot_wider(id_cols = id, names_from = .metric, values_from = .estimate) %>%
+  kable(col.names = c("Fold", "RMSE", "R-squared"), caption = "Model 1")
+
+#choco_fit <- linear_reg() %>%
+  #set_engine("lm") %>%
+  #fit(rating ~ cocoa_percent + vanilla + salt +
+        #num_ingres + top_memorable, data = chocolate_clean)
+
+#tidy(choco_fit)
+
+#glance(choco_fit) %>%
+  #select(adj.r.squared, AIC, BIC)
 ```
+
+
 
 ### All predictors
 
 ```{r}
 #| label: fitting full model
 
-choco_fit_full <- linear_reg() %>%
-  set_engine("lm") %>%
-  fit(rating ~ cocoa_percent + vanilla + salt +
-        num_ingres + top_memorable + continent_company, 
-      data = chocolate_clean)
 
-tidy(choco_fit_full)
+choco_rec2 <- recipe(rating ~ cocoa_percent + vanilla + salt + num_ingres + 
+                       top_memorable + continent_company + continent_bean, 
+                     data = choco_training) %>%
+  step_center(num_ingres, cocoa_percent) %>%
+  step_dummy(all_nominal_predictors()) %>%
+  step_zv(all_predictors())
 
-glance(choco_fit_full) %>%
-  select(adj.r.squared, AIC, BIC)
+choco_wflow2 <- workflow() %>%
+  add_model(choco_spec) %>%
+  add_recipe(choco_rec2)
+
+set.seed(2500)
+choco_folds <- vfold_cv(choco_training, v = 5)
+choco_fit_rs2 <- choco_wflow2 %>%
+  fit_resamples(choco_folds)
+
+cv_metrics2 <- collect_metrics(choco_fit_rs2, summarize = FALSE)
+
+cv_metrics2 %>%
+  mutate(.estimate = round(.estimate, 3)) %>%
+  pivot_wider(id_cols = id, names_from = .metric, values_from = .estimate) %>%
+  kable(col.names = c("Fold", "RMSE", "R-squared"), caption = "Model 2")
+
+
+#choco_fit_full <- linear_reg() %>%
+  #set_engine("lm") %>%
+  #fit(rating ~ cocoa_percent + vanilla + salt +
+        #num_ingres + top_memorable + continent_company, 
+      #data = chocolate_clean)
+
+#tidy(choco_fit_full)
+
+#glance(choco_fit_full) %>%
+  #select(adj.r.squared, AIC, BIC)
 ```
-As both models have similar adjusted r squared values, and AIC and BIC values, due to the goals of parsimony and model conciseness, we choose to proceed with the first model.
+As both models have similar adjusted r squared values, and AIC and BIC values, we will perform a cross-validation test.
+
+
 
 
 # Data
