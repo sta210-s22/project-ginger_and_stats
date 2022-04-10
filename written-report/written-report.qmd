@@ -6,6 +6,12 @@ format: pdf
 editor: visual
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, 
+                      warning = FALSE, 
+                      message = FALSE)
+```
+
 ```{r}
 #| label: load-pkg-data
 #| warning: false
@@ -23,7 +29,6 @@ library(kableExtra)
 chocolate <- read_csv("../data/chocolate.csv")
 
 world <- ne_countries(scale = "medium", returnclass = "sf")
-
 ```
 
 # Exploratory Data Analysis
@@ -150,13 +155,6 @@ chocolate <- chocolate %>%
     num_ingres = if_else(is.na(ingredients), "0", str_sub(ingredients, 1, 1)),
     num_ingres = as.numeric(num_ingres)
   )
-
-chocolate %>%
-  drop_na(
-    ingredients
-  ) %>%
-  count()
-
 
 ggplot(chocolate, aes(num_ingres))+
   geom_histogram(binwidth = 1)+
@@ -302,8 +300,6 @@ This visualization showcases the distribution of ratings for each review year. T
 chocolate_clean <- chocolate %>%
   separate(most_memorable_characteristics, sep= ",", into= c("most_memorable", "other_memorable"), extra= "merge") %>%
   select(-other_memorable) 
-
-
 ```
 
 ```{r}
@@ -527,9 +523,9 @@ ggplot() +
     mapping = aes(x = id,y = .estimate,
     color = "Model 2 (Full model)", group = 1)) +
   scale_color_manual(name = "Regression Model",
-    breaks=c("Model 1", "Model 2 (Full Model)"),
+    breaks=c("Model 1", "Model 2 (Full model)"),
     values=c("Model 1" = "#1E88E5",
-    "Model 2 (Interaction effect)" = "#FFC107")) +
+    "Model 2 (Full model)" = "#FFC107")) +
   labs(
     title = "Visualization of RMSE for each Cross Validation Fold",
     subtitle = "Separated by Model",
@@ -552,11 +548,11 @@ ggplot() +
     color = "#FFC107") +
   geom_line(data = cv_metrics2 %>% filter(.metric == "rsq"),
     mapping = aes(x = id,y = .estimate,
-    color = "Model 2 (Interaction effect)", group = 1)) +
+    color = "Model 2 (Full model)", group = 1)) +
     scale_color_manual(name = "Regression Model",
-    breaks=c("Model 1", "Model 2 (Interaction effect)"),
+    breaks=c("Model 1", "Model 2 (Full model)"),
     values=c("Model 1" = "#1E88E5",
-    "Model 2 (Interaction effect)" = "#FFC107")) +
+    "Model 2 (Full model)" = "#FFC107")) +
   labs(
     title = "Visualization of R-squared for each Cross Validation Metric",
     subtitle = "Separated by Model",
@@ -570,4 +566,4 @@ As both models have similar RMSE and R-squared values for each fold in cross-val
 
 # Data
 
-The data dictionary can be found [here](ADD%20LINK!!!).
+The data dictionary can be found [here](https://github.com/sta210-s22/project-ginger_and_stats/tree/main/data).
