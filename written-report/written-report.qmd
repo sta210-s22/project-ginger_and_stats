@@ -74,6 +74,8 @@ ggplot(data= chocolate, aes(x= cocoa_percent, y= rating)) + geom_boxplot()
 
 chocolate$rating <- as.numeric(chocolate$rating) 
 ```
+We can see a general rough trend that as the median cocoa percent is lower, the rating of the chocolate bar is higher. Furthermore, there appear to be a lot of outliers in the middle ratings (2.25 - 3.75), which might be due to the fact that that is the rating for the bulk of the chocolates tested.
+
 
 ## Ingredients (Nathan)
 
@@ -120,6 +122,10 @@ pSa <- ggplot(chocolate, aes(salt, fill = as.factor(rating))) +
 
 ```
 
+
+From this visualization, we can see that the presence of salt and vanilla seem to affect the rating the most out of all the predicters. The presence of salt and vanilla results in more lower ratings, while the amount of high and low ratings remains roughly the same with/without the presence of cocoa butter and lecithin. 
+
+
 ```{r}
 chocolate <- chocolate %>%
   mutate(
@@ -145,6 +151,8 @@ ggplot(chocolate, aes(num_ingres))+
   )
 ```
 
+This visualization showcases a right skewed distribution for the number of ingredients. The median is somewhere around 3 ingredients, and there appears to be an outlier centered around 0. This could be as many chocolate bars use at least one of the common ingredients, and it is quite rare for a chocolate bar not to have any of those ingredients. 
+
 ## Most Memorable Characteristic (Aimi)
 
 ```{r}
@@ -167,6 +175,8 @@ tidy_chocolate %>%
   scale_x_log10() 
 ```
 
+From this visualization, we can see that the phrases and most memorable charactersists that were often associated with a higher rating were "balanced" and "complex", as well as fruity chocolate like "fruit", "Cardamon", "floral".
+
 ## Country Bean of Origin (Rakshita)
 
 ```{r}
@@ -188,6 +198,7 @@ ggplot(data = chocworld_data) +
   labs(title = "Map of countries where cacao beans were produced")
 ```
 
+This map shows that the majority of cacao beans are produced in central America, South America, Asia, and Africa. 
 ## Company Location (Rakshita)
 
 ```{r}
@@ -216,13 +227,15 @@ chocolate %>%
 
 
 ```
-
+This map shows that the majority of countries that chocolate companies are located in are concentrated in North America and Europe, and that the US is host to the largest amount of chocolate companies. 
 ## Review Date (Nathan)
 
 ```{r}
 ggplot(chocolate, aes(review_date))+
   geom_bar()
 ```
+
+Here, we can see that the distribution of chocolate bars reviewed over time has a roughly unimodal distribution with a peak around 2015. Furthermore there was a signficant dip in 2020, probably due to the COVID-19 Pandemic, as well as a dip in 2017, due to unknown reasons. The distribution is centered around 2014 and is roughly symmetric.
 
 ```{r}
 #| label: review date statistics
@@ -252,7 +265,7 @@ ggplot(chocolate, aes(date_fct, fill = as.factor(rating)))+
   coord_flip()+
   scale_fill_viridis_d()
 ```
-
+This visualization showcases the distribution of ratings for each review year. There is no apparent change or pattern to the change in ratings of years, and it appears that ratings from 2.5 - 3.25 compose the bulk of the ratings each year. 
 ```{r}
 #| label: most-memorable-cleaning
 
@@ -413,7 +426,7 @@ tidy(choco_fit_full)
 glance(choco_fit_full) %>%
   select(adj.r.squared, AIC, BIC)
 ```
-
+As both models have similar adjusted r squared values, and AIC and BIC values, due to the goals of parsimony and model consiceseness, we choose to proceed with the first model.
 
 
 # Data
