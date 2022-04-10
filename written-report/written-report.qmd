@@ -397,6 +397,25 @@ glance(choco_fit) %>%
   select(adj.r.squared, AIC, BIC)
 ```
 
+### All predictors
+
+```{r}
+choco_fit_full <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(rating ~ cocoa_percent + vanilla + salt +
+        num_ingres + top_memorable + continent_company, 
+      data = chocolate_clean)
+
+tidy(choco_fit_full)
+```
+
+```{r}
+glance(choco_fit_full) %>%
+  select(adj.r.squared, AIC, BIC)
+```
+
+
+
 # Data
 
 The data dictionary can be found [here](ADD%20LINK!!!).
