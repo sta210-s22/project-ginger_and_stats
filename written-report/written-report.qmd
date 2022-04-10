@@ -52,9 +52,7 @@ The data is collected by members of the Manhattan Chocolate Society reviewing ch
 
 ## Shape of Ratings (already done)
 
-
-
-## Cocoa Percent 
+## Cocoa Percent
 
 ```{r}
 #| label: cocoa-percent
@@ -75,10 +73,10 @@ ggplot(data= chocolate, aes(x= cocoa_percent, y= rating)) + geom_boxplot() +
 
 chocolate$rating <- as.numeric(chocolate$rating) 
 ```
-From the distribution of cocoa_percent, we see that the distribution is roughly symmetric and unimodal, and centered around 72 percent, and has apparent outliers around 55 percent and 100 percent. 
+
+From the distribution of cocoa_percent, we see that the distribution is roughly symmetric and unimodal, and centered around 72 percent, and has apparent outliers around 55 percent and 100 percent.
 
 From the boxplot, we can see a general rough trend that as the median cocoa percent is lower, the rating of the chocolate bar is higher. Furthermore, there appear to be a lot of outliers in the middle ratings (2.25 - 3.75), which might be due to the fact that that is the rating for the bulk of the chocolates tested.
-
 
 ## Ingredients
 
@@ -142,9 +140,7 @@ pSa <- ggplot(chocolate, aes(salt, fill = as.factor(rating))) +
 
 ```
 
-
-From this visualization, we can see that the presence of salt and vanilla seem to affect the rating the most out of all the predicters. The presence of salt and vanilla results in more lower ratings, while the amount of high and low ratings remains roughly the same with/without the presence of cocoa butter and lecithin. 
-
+From this visualization, we can see that the presence of salt and vanilla seem to affect the rating the most out of all the predicters. The presence of salt and vanilla results in more lower ratings, while the amount of high and low ratings remains roughly the same with/without the presence of cocoa butter and lecithin.
 
 ```{r}
 #| label: num-of-ingredients-variable-and-vis
@@ -171,7 +167,7 @@ ggplot(chocolate, aes(num_ingres))+
   )
 ```
 
-This visualization showcases a right skewed distribution for the number of ingredients. The median is somewhere around 3 ingredients, and there appears to be an outlier centered around 0. This could be as many chocolate bars use at least one of the common ingredients, and it is quite rare for a chocolate bar not to have any of those ingredients. 
+This visualization showcases a right skewed distribution for the number of ingredients. The median is somewhere around 3 ingredients, and there appears to be an outlier centered around 0. This could be as many chocolate bars use at least one of the common ingredients, and it is quite rare for a chocolate bar not to have any of those ingredients.
 
 ## Most Memorable Characteristic (Aimi)
 
@@ -218,7 +214,7 @@ ggplot(data = chocworld_data) +
   labs(title = "Map of countries where cacao beans were produced")
 ```
 
-This map shows that the majority of cacao beans are produced in central America, South America, Asia, and Africa. 
+This map shows that the majority of cacao beans are produced in central America, South America, Asia, and Africa.
 
 ## Company Location (Rakshita)
 
@@ -248,7 +244,8 @@ chocolate %>%
 
 
 ```
-This map shows that the majority of countries that chocolate companies are located in are concentrated in North America and Europe, and that the US is host to the largest amount of chocolate companies. 
+
+This map shows that the majority of countries that chocolate companies are located in are concentrated in North America and Europe, and that the US is host to the largest amount of chocolate companies.
 
 ## Review Date (Nathan)
 
@@ -296,7 +293,9 @@ ggplot(chocolate, aes(date_fct, fill = as.factor(rating)))+
   coord_flip()+
   scale_fill_viridis_d()
 ```
-This visualization showcases the distribution of ratings for each review year. There is no apparent change or pattern to the change in ratings of years, and it appears that ratings from 2.5 - 3.25 compose the bulk of the ratings each year. 
+
+This visualization showcases the distribution of ratings for each review year. There is no apparent change or pattern to the change in ratings of years, and it appears that ratings from 2.5 - 3.25 compose the bulk of the ratings each year.
+
 ```{r}
 #| label: most-memorable-cleaning
 
@@ -425,7 +424,6 @@ chocolate_clean <- chocolate_clean %>%
 
 ### Ratings vs cocoa percent, ingredients, most memorable characteristics
 
-
 ```{r}
 #| label: inital-split
 
@@ -469,8 +467,6 @@ cv_metrics1 %>%
   #select(adj.r.squared, AIC, BIC)
 ```
 
-
-
 ### All predictors
 
 ```{r}
@@ -512,10 +508,65 @@ cv_metrics2 %>%
 #glance(choco_fit_full) %>%
   #select(adj.r.squared, AIC, BIC)
 ```
-As both models have similar adjusted r squared values, and AIC and BIC values, we will perform a cross-validation test.
+
+```{r}
+#| label: model compararsion vis
+
+#RMSE Visualization
+ggplot() +
+  geom_point(data = cv_metrics1 %>% filter(.metric == "rmse"),
+    mapping = aes(x = id, y = .estimate),
+    color = "#1E88E5") +
+  geom_line(data = cv_metrics1 %>% filter(.metric == "rmse"),
+    mapping = aes(x = id,y = .estimate,
+    color = "Model 1", group = 1)) +
+  geom_point(data = cv_metrics2 %>% filter(.metric == "rmse"),
+    mapping = aes(x = id,y = .estimate),
+    color = "#FFC107") +
+  geom_line(data = cv_metrics2 %>% filter(.metric == "rmse"),
+    mapping = aes(x = id,y = .estimate,
+    color = "Model 2 (Full model)", group = 1)) +
+  scale_color_manual(name = "Regression Model",
+    breaks=c("Model 1", "Model 2 (Full Model)"),
+    values=c("Model 1" = "#1E88E5",
+    "Model 2 (Interaction effect)" = "#FFC107")) +
+  labs(
+    title = "Visualization of RMSE for each Cross Validation Fold",
+    subtitle = "Separated by Model",
+    y = "RMSE Value",
+    x = "Fold"
+  )
 
 
+#RSQ Visualization
 
+ggplot() +
+  geom_point(data = cv_metrics1 %>% filter(.metric == "rsq"),
+    mapping = aes(x = id, y = .estimate),
+    color = "#1E88E5") +
+  geom_line(data = cv_metrics1 %>% filter(.metric == "rsq"),
+    mapping = aes(x = id,y = .estimate,
+    color = "Model 1", group = 1)) +
+  geom_point(data = cv_metrics2 %>% filter(.metric == "rsq"),
+    mapping = aes(x = id,y = .estimate),
+    color = "#FFC107") +
+  geom_line(data = cv_metrics2 %>% filter(.metric == "rsq"),
+    mapping = aes(x = id,y = .estimate,
+    color = "Model 2 (Interaction effect)", group = 1)) +
+    scale_color_manual(name = "Regression Model",
+    breaks=c("Model 1", "Model 2 (Interaction effect)"),
+    values=c("Model 1" = "#1E88E5",
+    "Model 2 (Interaction effect)" = "#FFC107")) +
+  labs(
+    title = "Visualization of R-squared for each Cross Validation Metric",
+    subtitle = "Separated by Model",
+    y = "Rsq Value",
+    x = "Fold"
+  )
+
+```
+
+As both models have similar RMSE and R-squared values for each fold in cross-validation we will choose the first model as it has fewer predictor variables and aligns with the goals of parsimony.
 
 # Data
 
