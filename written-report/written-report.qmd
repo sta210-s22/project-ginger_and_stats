@@ -9,7 +9,9 @@ editor: visual
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, 
                       warning = FALSE, 
-                      message = FALSE)
+                      message = FALSE,
+                      fig.width = 10, fig.asp = 0.618, out.width = "90%",
+  fig.retina = 3, dpi = 300, fig.align = "center")
 ```
 
 ```{r}
@@ -29,35 +31,49 @@ library(kableExtra)
 chocolate <- read_csv("../data/chocolate.csv")
 
 world <- ne_countries(scale = "medium", returnclass = "sf")
+
+ggplot2::theme_set(ggplot2::theme_minimal(base_size = 20))
 ```
 
-# Exploratory Data Analysis
+# Introduction and data
 
 ## Data description
 
--   Description of the observations in the data set:
+The data is collected by members of the Manhattan Chocolate Society reviewing chocolate bars using the rating system found at <http://flavorsofcacao.com/review_guide.html> and adding other characteristics about the bar itself. It is being continuously collected and added to the dataset after reviewing chocolate bars - this can be seen as the first review years for chocolate bars began in 2006 and have continued until 2021. It contains 2530 observations, each represents a review of general characteristics for different chocolate bars. A single observation in this dataset represents a single chocolate bars
 
-    -   The observations in this data set represent a review of general characteristics for different chocolate bars. A single observation in this data set represents a single chocolate bar.
+The general characteristics that will be our main interest are described as follows:
 
-    -   The general characteristics are as follows:
+-   Company (Manufacturer) lists who made the chocolate bar reviewed; the dataset also lists where this company is located under Company Location.
+-   The dataset characterizes the Country of Bean Origin, Specific Bean Origin or name of bar, Percentage of Cocoa within the bar for each chocolate bar.
+-   The data also shows which ingredients are used using letters, where B = Beans, S = Sugar, S* = Sweeteners other than white can or beet sugar, C = Cocoa Butter, V = Vanilla, L = Lecithin, Sa = Salt.
+-   Finally, the data shows the rating (which ranges from 1-5, incrementing by 0.25) given under their rating system, which is linked above, as well as the date it was reviewed on.
 
-        -   Company (Manufacturer) lists who made the chocolate bar reviewed; the dataset also lists where this company is located under Company Location.
+## Exploratory data analysis
 
-        -   The dataset characterizes the Country of Bean Origin, Specific Bean Origin or name of bar, Percentage of Cocoa within the bar for each chocolate bar.
+### Shape of Ratings 
 
-        -   The data also shows which ingredients are used using letters, where B = Beans, S = Sugar, S\* = Sweeteners other than white can or beet sugar, C = Cocoa Butter, V = Vanilla, L = Lecithin, Sa = Salt.
+```{r}
+ggplot(chocolate, aes(rating)) +
+  geom_histogram(binwidth = 0.25, color = "white")+
+  labs(
+    title = "Distribution of rating",
+    x = "Rating"
+  )
+```
+We can see that the distribution of the rating is unimodal, centered around the value of 3 or 3.25. It is also left-skewed, with some possible outliers of value 1 or 1.5. 
 
-        -   Finally, the data shows the rating (which ranges from 1-5, incrementing by 0.25) given under their rating system, which is linked above, as well as the date it was reviewed on 
+```{r}
+chocolate %>%
+  summarise(
+    mean = mean(rating),
+    median = median(rating),
+    sd = sd(rating)
+  ) %>%
+  kable(digits = 3)
+```
 
--   Description of how the data was originally collected (not how you found the data but how the original curator of the data collected it).
 
-    -   Data is being continuously collected and added to the dataset after reviewing chocolate bars - this can be seen as the first review years for chocolate bars began in 2006 and have continued until 2021.
-
-The data is collected by members of the Manhattan Chocolate Society reviewing chocolate bars using the rating system found at <http://flavorsofcacao.com/review_guide.html> and adding other characteristics about the bar itself.
-
-## Shape of Ratings (already done)
-
-## Cocoa Percent
+### Cocoa Percent
 
 ```{r}
 #| label: cocoa-percent
@@ -83,7 +99,7 @@ From the distribution of cocoa_percent, we see that the distribution is roughly 
 
 From the boxplot, we can see a general rough trend that as the median cocoa percent is lower, the rating of the chocolate bar is higher. Furthermore, there appear to be a lot of outliers in the middle ratings (2.25 - 3.75), which might be due to the fact that that is the rating for the bulk of the chocolates tested.
 
-## Ingredients
+### Ingredients
 
 ```{r}
 #| label: ingredients-seperate
@@ -165,9 +181,9 @@ ggplot(chocolate, aes(num_ingres))+
   )
 ```
 
-This visualization showcases a right skewed distribution for the number of ingredients. The median is somewhere around 3 ingredients, and there appears to be an outlier centered around 0. This could be as many chocolate bars use at least one of the common ingredients, and it is quite rare for a chocolate bar not to have any of those ingredients.
+In this visualization we regard the NA value of ingredients as 0, which means we should understand this as nonrecorded value instead of no ingredients are presented in the chocolate. This visualization showcases a right skewed distribution for the number of ingredients. The median is somewhere around 3 ingredients, and there appears to be an outlier centered around 0. This could be as many chocolate bars use at least one of the common ingredients, and it is quite rare for a chocolate bar not to have any of those ingredients.
 
-## Most Memorable Characteristic (Aimi)
+### Most Memorable Characteristic
 
 ```{r}
 #| label: memorable-char-vis
@@ -191,7 +207,7 @@ tidy_chocolate %>%
 
 From this visualization, we can see that the phrases and most memorable charactersists that were often associated with a higher rating were "balanced" and "complex", as well as fruity chocolate like "fruit", "Cardamon", "floral".
 
-## Country Bean of Origin (Rakshita)
+### Country Bean of Origin
 
 ```{r}
 #| label: country-bean-of-origin-vis
@@ -214,7 +230,7 @@ ggplot(data = chocworld_data) +
 
 This map shows that the majority of cacao beans are produced in central America, South America, Asia, and Africa.
 
-## Company Location (Rakshita)
+### Company Location
 
 ```{r}
 #| label: company-location-vis
@@ -237,15 +253,13 @@ ggplot(data = chocworld_data1) +
   geom_sf(aes(fill = numBars, geometry = geometry)) +
   labs(title = "Map of countries where companies are located")
 
-chocolate %>%
+company_loc_count <- chocolate %>%
     count(company_location, sort = TRUE)
-
-
 ```
 
 This map shows that the majority of countries that chocolate companies are located in are concentrated in North America and Europe, and that the US is host to the largest amount of chocolate companies.
 
-## Review Date (Nathan)
+### Review Date 
 
 ```{r}
 #| label: review-date-vis
@@ -282,17 +296,19 @@ chocolate <- chocolate %>%
     date_fct = as.factor(review_date)
   )
 
-ggplot(chocolate, aes(date_fct, cocoa_percent))+
-  geom_boxplot()+
-  coord_flip()
-
-ggplot(chocolate, aes(date_fct, fill = as.factor(rating)))+
-  geom_bar(position = "fill")+
-  coord_flip()+
-  scale_fill_viridis_d()
+ggplot(chocolate, aes(x = rating, fill = as.factor(review_date))) + 
+  geom_density(alpha = .5) + 
+  theme_minimal() +
+  facet_wrap(~ as.factor(review_date)) + 
+  guides(fill = FALSE) + labs(x = 'Rating', y = 'Density')+
+  labs(
+    title = "Distribution of rating over 12 years from 2006 - 2021"
+  )
 ```
 
 This visualization showcases the distribution of ratings for each review year. There is no apparent change or pattern to the change in ratings of years, and it appears that ratings from 2.5 - 3.25 compose the bulk of the ratings each year.
+
+\pagebreak
 
 ```{r}
 #| label: most-memorable-cleaning
@@ -416,7 +432,18 @@ chocolate_clean <- chocolate_clean %>%
   ))
 ```
 
-## Analysis approach
+# Methodology
+
+Our main goal of this analysis is to understand how the characteristics of a chocolate can explain its rating. Since the rating is treated as a quantitative variable, we will perform a linear regression model to fit and predict the rating from the features of a chocolate. We also wish to examine which combination of predictors would make the best model for prediction, so here we examine three different scenarios:
+-   The rating of a chocolate might depend on their percentage of cocoa, their ingredients, and their most memorable characteristics recorded. 
+-   The rating of a chocolate might depend on more predictors besides those list above, for example, on the number of ingredients presented in the chocolate, the origin of the company (divided into continents), and the origin of the cocoa bean (divided into continents).
+-   It is possible that the rating of a chocolate might depend only on the company location and the origin of the bean. 
+
+So we will perform a linear regression on these three scenarios, and evaluate which model perform the best. Our initial approach is to use a simple regression and compared adjusted R-squared, AIC, and BIC, as well as checking their conditions, but the differences of those statistics between the two models are almost the same which does not tell much, so we perform a cross-validation and compare r-squared and rsme instead. 
+
+(possible, if we decide to add it in) We also consider a scenario where there are some strong interactions between the predictors, 
+
+# Results
 
 ### Ratings vs cocoa percent, ingredients, most memorable characteristics
 
