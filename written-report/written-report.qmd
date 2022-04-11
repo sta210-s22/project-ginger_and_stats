@@ -310,6 +310,8 @@ This visualization showcases the distribution of ratings for each review year. T
 
 \pagebreak
 
+For cleaning the most memorable characteristic column, we assumed that the first word in the column was the dominant memorable characteristic. From there, we created groups out of the most popular words. For example, characteristics that contained the word "fruit" or "berry" were grouped together into "fruity".
+
 ```{r}
 #| label: most-memorable-cleaning
 
