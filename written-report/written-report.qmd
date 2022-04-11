@@ -296,6 +296,8 @@ ggplot(chocolate, aes(date_fct, fill = as.factor(rating)))+
 
 This visualization showcases the distribution of ratings for each review year. There is no apparent change or pattern to the change in ratings of years, and it appears that ratings from 2.5 - 3.25 compose the bulk of the ratings each year.
 
+For cleaning the most memorable characteristic column, we assumed that the first word in the column was the dominant memorable characteristic. From there, we created groups out of the most popular words. For example, characteristics that contained the word "fruit" or "berry" were grouped together into "fruity".
+
 ```{r}
 #| label: most-memorable-cleaning
 
