@@ -37,6 +37,28 @@ ggplot2::theme_set(ggplot2::theme_minimal(base_size = 20))
 
 # Introduction and data
 
+## Broader Context + Research Question
+
+Chocolate is one of the most popular sweets in the world-- according to the World Cocoa Foundation, more than 3 million tons of cocoa beans a year are consumed. Dark chocolate, which this dataset focuses on, has been linked to increase heart health, balance the immune system, combat diabetes, improve brain function, boost athletic performance, and reduce stress (1). While dark chocolate can be helpful to human health, arguably, its popularity is due to its taste and its ability to make us "feel good."  Studies have found that the ability to make us "feel good" is due to the psychoactive chemicals it contains (2). For serious chocolate lovers, chocolate's particular chemical signature can be needed by chocolate lovers' metabolic systems, thus making the treat particularly delicious to them (3).  But other than the chemical compounds in chocolate, how does taste impact chocolate's likeability? What other factors can impact chocolate's likeability? Our dataset contains different dark chocolate bars. One of the columns is chocolate ratings, which are made by members of the Manhattan Chocolate Society. Using the chocolate rating as an indication of the chocolate's likeability, our general research question, therefore, is what can predict chocolate ratings? 
+
+Based on our research question, we have the following hypotheses:
+
+1.  A lower cocoa percentage is linked to a higher rating. 
+
+2.  Chocolate companies that are located in the USA or a European country will have higher ratings. 
+
+3.  Cocoa percentage and ingredients are the strongest predictors. 
+
+4.  Country of bean origin will not be a strong predictor. 
+
+References:
+
+1.  <https://www.hopkinsmedicine.org/health/wellness-and-prevention/the-benefits-of-having-a-healthy-relationship-with-chocolate>
+
+2.  https://www.bbc.com/news/health-39067088
+
+3.  <https://www.acs.org/content/acs/en/pressroom/newsreleases/2007/october/news-release-study-finds-that-people-are-programmed-to-love-chocolate.html>
+
 ## Data description
 
 The data is collected by members of the Manhattan Chocolate Society reviewing chocolate bars using the rating system found at <http://flavorsofcacao.com/review_guide.html> and adding other characteristics about the bar itself. It is being continuously collected and added to the dataset after reviewing chocolate bars - this can be seen as the first review years for chocolate bars began in 2006 and have continued until 2021. It contains 2530 observations, each represents a review of general characteristics for different chocolate bars. A single observation in this dataset represents a single chocolate bars
@@ -44,13 +66,18 @@ The data is collected by members of the Manhattan Chocolate Society reviewing ch
 The general characteristics that will be our main interest are described as follows:
 
 -   Company (Manufacturer) lists who made the chocolate bar reviewed; the dataset also lists where this company is located under Company Location.
+
 -   The dataset characterizes the Country of Bean Origin, Specific Bean Origin or name of bar, Percentage of Cocoa within the bar for each chocolate bar.
--   The data also shows which ingredients are used using letters, where B = Beans, S = Sugar, S* = Sweeteners other than white can or beet sugar, C = Cocoa Butter, V = Vanilla, L = Lecithin, Sa = Salt.
+
+-   The data also shows which ingredients are used using letters, where B = Beans, S = Sugar, S\* = Sweeteners other than white can or beet sugar, C = Cocoa Butter, V = Vanilla, L = Lecithin, Sa = Salt.
+
 -   Finally, the data shows the rating (which ranges from 1-5, incrementing by 0.25) given under their rating system, which is linked above, as well as the date it was reviewed on.
+
+The data dictionary can be found [here](https://github.com/sta210-s22/project-ginger_and_stats/tree/main/data).
 
 ## Exploratory data analysis
 
-### Shape of Ratings 
+### Shape of Ratings
 
 ```{r}
 ggplot(chocolate, aes(rating)) +
@@ -60,7 +87,8 @@ ggplot(chocolate, aes(rating)) +
     x = "Rating"
   )
 ```
-We can see that the distribution of the rating is unimodal, centered around the value of 3 or 3.25. It is also left-skewed, with some possible outliers of value 1 or 1.5. 
+
+We can see that the distribution of the rating is unimodal, centered around the value of 3 or 3.25. It is also left-skewed, with some possible outliers of value 1 or 1.5.
 
 ```{r}
 chocolate %>%
@@ -71,7 +99,6 @@ chocolate %>%
   ) %>%
   kable(digits = 3)
 ```
-
 
 ### Cocoa Percent
 
@@ -259,7 +286,7 @@ company_loc_count <- chocolate %>%
 
 This map shows that the majority of countries that chocolate companies are located in are concentrated in North America and Europe, and that the US is host to the largest amount of chocolate companies.
 
-### Review Date 
+### Review Date
 
 ```{r}
 #| label: review-date-vis
@@ -432,18 +459,16 @@ chocolate_clean <- chocolate_clean %>%
     continent_company== "Europe" ~ "Europe", 
     TRUE ~ "Other"
   ))
+
 ```
 
 # Methodology
 
-Our main goal of this analysis is to understand how the characteristics of a chocolate can explain its rating. Since the rating is treated as a quantitative variable, we will perform a linear regression model to fit and predict the rating from the features of a chocolate. We also wish to examine which combination of predictors would make the best model for prediction, so here we examine three different scenarios:
--   The rating of a chocolate might depend on their percentage of cocoa, their ingredients, and their most memorable characteristics recorded. 
--   The rating of a chocolate might depend on more predictors besides those list above, for example, on the number of ingredients presented in the chocolate, the origin of the company (divided into continents), and the origin of the cocoa bean (divided into continents).
--   It is possible that the rating of a chocolate might depend only on the company location and the origin of the bean. 
+Our main goal of this analysis is to understand how the characteristics of a chocolate can explain its rating. Since the rating is treated as a quantitative variable, we will perform a linear regression model to fit and predict the rating from the features of a chocolate. We also wish to examine which combination of predictors would make the best model for prediction, so here we examine three different scenarios: - The rating of a chocolate might depend on their percentage of cocoa, their ingredients, and their most memorable characteristics recorded. - The rating of a chocolate might depend on more predictors besides those list above, for example, on the number of ingredients presented in the chocolate, the origin of the company (divided into continents), and the origin of the cocoa bean (divided into continents). - It is possible that the rating of a chocolate might depend only on the company location and the origin of the bean.
 
-So we will perform a linear regression on these three scenarios, and evaluate which model perform the best. Our initial approach is to use a simple regression and compared adjusted R-squared, AIC, and BIC, as well as checking their conditions, but the differences of those statistics between the two models are almost the same which does not tell much, so we perform a cross-validation and compare r-squared and rsme instead. 
+So we will perform a linear regression on these three scenarios, and evaluate which model perform the best. Our initial approach is to use a simple regression and compared adjusted R-squared, AIC, and BIC, as well as checking their conditions, but the differences of those statistics between the two models are almost the same which does not tell much, so we perform a cross-validation and compare r-squared and rsme instead.
 
-(possible, if we decide to add it in) We also consider a scenario where there are some strong interactions between the predictors, 
+(possible, if we decide to add it in) We also consider a scenario where there are some strong interactions between the predictors,
 
 # Results
 
@@ -591,8 +616,42 @@ ggplot() +
 
 ```
 
-As both models have similar RMSE and R-squared values for each fold in cross-validation we will choose the first model as it has fewer predictor variables and aligns with the goals of parsimony.
+As both models have similar RMSE and R-squared values for each fold in cross-validation we will choose the first model as it has fewer predictor variables and aligns with the goals of parsimony. (expand more?)
 
-# Data
+```{r}
+#| label: print-out-model
 
-The data dictionary can be found [here](https://github.com/sta210-s22/project-ginger_and_stats/tree/main/data).
+choco_fit <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(rating ~ cocoa_percent + vanilla + salt +
+        num_ingres + top_memorable, data =
+        chocolate_clean)
+
+tidy(choco_fit) %>%
+  kable(digits=3, caption= "Model 1 Fit")
+
+```
+
+```{r}
+#| label: residuals-pattern-explanatory
+
+choco_aug <- augment(choco_fit$fit)
+
+ggplot(data= choco_aug, aes(x= .fitted, y= .resid, color= vanilla)) + 
+  geom_point() + 
+  geom_line(y=0, color= "blue")
+```
+
+```{r}
+#| label: residuals-pattern-rating
+
+choco_aug <- augment(choco_fit$fit)
+
+ggplot(data= choco_aug, aes(x= .fitted, y= .resid, color= rating)) + 
+  geom_point() + 
+  geom_line(y=0, color= "blue") + 
+  scale_colour_gradient2(low= "red", 
+                         high= "blue")
+```
+
+# Results
