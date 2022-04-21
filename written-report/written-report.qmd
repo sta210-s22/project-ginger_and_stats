@@ -75,7 +75,11 @@ The general characteristics that will be our main interest are described as foll
 
 The data dictionary can be found [here](https://github.com/sta210-s22/project-ginger_and_stats/tree/main/data).
 
-## Exploratory data analysis
+## Methodology
+
+### Exploratory Data Analysis (EDA)
+
+Before we began modeling, we first performed some Exploratory Data Analysis to decide how we were going to use the variables in our modeling.
 
 ### Shape of Ratings
 
@@ -462,13 +466,25 @@ chocolate_clean <- chocolate_clean %>%
 
 ```
 
-# Methodology
+### Data Cleaning
 
-Our main goal of this analysis is to understand how the characteristics of a chocolate can explain its rating. Since the rating is treated as a quantitative variable, we will perform a linear regression model to fit and predict the rating from the features of a chocolate. We also wish to examine which combination of predictors would make the best model for prediction, so here we examine three different scenarios: - The rating of a chocolate might depend on their percentage of cocoa, their ingredients, and their most memorable characteristics recorded. - The rating of a chocolate might depend on more predictors besides those list above, for example, on the number of ingredients presented in the chocolate, the origin of the company (divided into continents), and the origin of the cocoa bean (divided into continents). - It is possible that the rating of a chocolate might depend only on the company location and the origin of the bean.
+To get our data ready for modeling, we first performed some data cleaning.
 
-So we will perform a linear regression on these three scenarios, and evaluate which model perform the best. Our initial approach is to use a simple regression and compared adjusted R-squared, AIC, and BIC, as well as checking their conditions, but the differences of those statistics between the two models are almost the same which does not tell much, so we perform a cross-validation and compare r-squared and rsme instead.
+1.  One of the variables that we are using in our modeling is a list of most memorable characteristics by the rater. To organize this variable in a way that can be used for our model, we assumed that the first characteristic listed was the most noticeable and made the biggest lasting impression. So, we only kept the first characteristic. From there, because there are a variety of characteristics, we decided to group them into some general groups: fatty_smooth, roast, strong_sweet, rough_texture, nutty, greasy, spiced, floral, fruity, complex, and other. For example, we put "cream" and "dairy" in the category of "fatty_smooth". 
 
-(possible, if we decide to add it in) We also consider a scenario where there are some strong interactions between the predictors,
+2.  Next, we also decided to simplify the locations of cocoa bean production. From our EDA, we learned that cocoa bean production locations are mostly based in South America, Asia, and Africa. So, we categorized the countries of cocoa bean production by the most popular continent categories: South America, Africa, Asia, and Other. 
+
+3.  Similarly, from our EDA, we learned that the company locations are mostly based in North America and Europe. So, we categorized the countries of cocoa bean production by the most popular continent categories: North America, Europe, and Other. 
+
+4.  We created a new variable that was the number of ingredients. 
+
+5.  In addition to the number of ingredients, we created 2 new variables: vanilla and salt. These variables indicated whether their specified ingredient was listed in the ingredients list. From our EDA, we learned that the presence of salt and vanilla seems to affect the rating the most out of all the ingredients.
+
+### Modeling
+
+Our main goal of this analysis is to understand how the characteristics of a chocolate can explain its rating. Although the rating only goes from 1 to 5 in 0.25 increments, we treated rating as a quantitative variable. Therefore, we used a linear regression model to fit and predict the rating from the features of a chocolate. We decided compare 2 models: a full model that had all the explanatory variables that we were interested in (location of cocoa bean production, location of chocolate company, number of ingredients, presence of vanilla, presence of salt, top memorable characteristics, and cocoa percentage) and a model with just the "taste" predictors (number of ingredients, presence of vanilla, presence of salt, top memorable characteristics, and cocoa percentage). We defined Model 1 as our model with just the "taste" predictors and Model 2 as our full model. 
+
+To evaluate which model performed better, we decided to perform a cross-validation and compare R-squared and RMSE values instead.
 
 # Results
 
