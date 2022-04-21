@@ -632,7 +632,7 @@ ggplot() +
 
 ```
 
-As both models have similar RMSE and R-squared values for each fold in cross-validation we will choose the first model as it has fewer predictor variables and aligns with the goals of parsimony. (expand more?)
+As both models have similar RMSE and R-squared values for each fold in cross-validation we will choose the first model as it has fewer predictor variables and aligns with the goals of parsimony, as it is a less complicated model yet doesn't sacrifice predictive capability.
 
 ```{r}
 #| label: print-out-model
@@ -671,3 +671,17 @@ ggplot(data= choco_aug, aes(x= .fitted, y= .resid, color= rating)) +
 ```
 
 # Results
+
+```{r}
+#| label: output final model
+
+choco_test_fit <- choco_wflow1 %>%
+  fit(data = choco_testing)
+
+tidy(choco_test_fit, conf.int = TRUE) %>%
+  kable()
+
+
+```
+
+We have assumed that this data fits the condition
