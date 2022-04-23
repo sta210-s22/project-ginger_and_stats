@@ -356,7 +356,6 @@ chocolate <- chocolate %>%
   )
 ```
 
-
 ```{r}
 #| label: most-memorable-cleaning
 
@@ -781,8 +780,6 @@ ggplot() +
   )
 ```
 
-
-
 ```{r}
 #| label: output final model
 
@@ -794,6 +791,18 @@ tidy(choco_test_fit, conf.int = TRUE) %>%
 
 ```
 
-We have assumed that this data fits the condition
+$$
+\begin{aligned}
+\hat{rating} = & 3.277  - .006 \times CocoaPercent + .027 \times NumIngredients \\ & + 0.128 \times isCocoa + 0.212\times isOff - .811 \times isChemical \\ & + .060 \times is Fruit +.339 \times isCreamy + .359 \times isComplex \\ &-.560 \times isBitter - .291 \times Vanilla_x1 - .165 \times Salt_X1 \\ &-.019 \times topMemFattySmooth  -.023 \times topMemFloral \\ &+ .176 \times topMemFruity + .148 \times topMemGreasy + .051 \times topMemNutty \\ & - .122 \times topMemOther  - .137 \times topMemRoast - .201 \times topMemRough \\ &- .044 \times topMemSpiced - .012 \times topMemStrongSweet
+\end{aligned}
+$$
 
+Interpretation of a few coefficients:
 
+Question: How do you inteerpret memorable characteristics in an intercept?
+
+Cocoa Percent: For every additional percentage in cocoa percent, the predicted rating is expected to decrease by .006 points, on average, with all else held constant.
+
+TopMemorableFloral: If a chocolate bar is noted as having the memorable characteristic of Floral Notes, the predicted rating is expected to decrease by -.023 rating points compared to chocolate bars that don't have this memorable characteristic, on average, with all else held constant.
+
+In the future, perhaps a more expansive dataset and knowledge of more regression techniques, like ordinal regression will help us gain more predictive probability.
