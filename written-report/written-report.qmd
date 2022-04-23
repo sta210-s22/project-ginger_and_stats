@@ -344,6 +344,20 @@ This visualization showcases the distribution of ratings for each review year. T
 For cleaning the most memorable characteristic column, we assumed that the first word in the column was the dominant memorable characteristic. From there, we created groups out of the most popular words. For example, characteristics that contained the word "fruit" or "berry" were grouped together into "fruity".
 
 ```{r}
+chocolate <- chocolate %>%
+  mutate(
+    isCocoa = ifelse(str_detect(most_memorable_characteristics, "cocoa"), 1, 0),
+    isCreamy = ifelse(str_detect(most_memorable_characteristics, "creamy"), 1, 0),
+    isComplex = ifelse(str_detect(most_memorable_characteristics, "complex"), 1, 0),
+    isBitter = ifelse(str_detect(most_memorable_characteristics, "bitter"), 1, 0),
+    isOff = ifelse(str_detect(most_memorable_characteristics, "off"), 1, 0),
+    isChemical = ifelse(str_detect(most_memorable_characteristics, "chemical"), 1, 0),
+    isFruit = ifelse(str_detect(most_memorable_characteristics, "fruit"), 1, 0),
+  )
+```
+
+
+```{r}
 #| label: most-memorable-cleaning
 
 chocolate_clean <- chocolate %>%
@@ -538,7 +552,6 @@ cv_metrics1 %>%
 ```{r}
 #| label: fitting full model
 
-
 choco_rec2 <- recipe(rating ~ cocoa_percent + vanilla + salt + num_ingres + 
                        top_memorable + continent_company + continent_bean, 
                      data = choco_training) %>%
@@ -659,7 +672,7 @@ ggplot(data= choco_aug, aes(x= .fitted, y= .resid, color= vanilla)) +
 ```
 
 ```{r}
-#| label: residuals-pattern-rating
+#| label: residuals-pattern-rating-1
 
 choco_aug <- augment(choco_fit$fit)
 
@@ -670,18 +683,117 @@ ggplot(data= choco_aug, aes(x= .fitted, y= .resid, color= rating)) +
                          high= "blue")
 ```
 
-# Results
+```{r}
+#| label: residuals-pattern-rating-2
+
+choco_aug <- augment(choco_fit$fit)
+
+ggplot(data= choco_aug, aes(x= .fitted, y= .resid, color= rating)) + 
+  geom_point() + 
+  geom_line(y=0, color= "blue") + 
+  scale_colour_gradient2(low= "red", 
+                         high= "blue")
+```
+
+```{r}
+#| label: new-model-fit
+
+set.seed(1200)
+
+choco_spec <- linear_reg() %>%
+  set_engine("lm")
+
+choco_rec3 <- recipe(rating ~ cocoa_percent + vanilla + salt + num_ingres + top_memorable +
+                       isCocoa + isOff + isChemical + isFruit + 
+                       isCreamy + isComplex + isBitter, data = choco_training) %>%
+  step_center(num_ingres, cocoa_percent) %>%
+  step_dummy(all_nominal_predictors()) %>%
+  step_zv(all_predictors())
+
+choco_wflow3 <- workflow() %>%
+  add_model(choco_spec) %>%
+  add_recipe(choco_rec3)
+
+set.seed(2900)
+choco_folds <- vfold_cv(choco_training, v = 5)
+choco_fit_rs3 <- choco_wflow3 %>%
+  fit_resamples(choco_folds)
+
+cv_metrics3 <- collect_metrics(choco_fit_rs3, summarize = FALSE)
+
+cv_metrics3 %>%
+  mutate(.estimate = round(.estimate, 3)) %>%
+  pivot_wider(id_cols = id, names_from = .metric, values_from = .estimate) %>%
+  kable(col.names = c("Fold", "RMSE", "R-squared"), caption = "Model 3")
+```
+
+```{r}
+#RMSE Visualization
+ggplot() +
+  geom_point(data = cv_metrics1 %>% filter(.metric == "rmse"),
+    mapping = aes(x = id, y = .estimate),
+    color = "#1E88E5") +
+  geom_line(data = cv_metrics1 %>% filter(.metric == "rmse"),
+    mapping = aes(x = id,y = .estimate,
+    color = "Model 3", group = 1)) +
+  geom_point(data = cv_metrics3 %>% filter(.metric == "rmse"),
+    mapping = aes(x = id,y = .estimate),
+    color = "#FFC107") +
+  geom_line(data = cv_metrics3 %>% filter(.metric == "rmse"),
+    mapping = aes(x = id,y = .estimate,
+    color = "Model 3 (New model)", group = 1)) +
+  scale_color_manual(name = "Regression Model",
+    breaks=c("Model 1", "Model 3 (New model)"),
+    values=c("Model 1" = "#1E88E5",
+    "Model 3 (New model)" = "#FFC107")) +
+  labs(
+    title = "Visualization of RMSE for each Cross Validation Fold",
+    subtitle = "Separated by Model",
+    y = "RMSE Value",
+    x = "Fold"
+  )
+
+
+#RSQ Visualization
+
+ggplot() +
+  geom_point(data = cv_metrics1 %>% filter(.metric == "rsq"),
+    mapping = aes(x = id, y = .estimate),
+    color = "#1E88E5") +
+  geom_line(data = cv_metrics1 %>% filter(.metric == "rsq"),
+    mapping = aes(x = id,y = .estimate,
+    color = "Model 1", group = 1)) +
+  geom_point(data = cv_metrics3 %>% filter(.metric == "rsq"),
+    mapping = aes(x = id,y = .estimate),
+    color = "#FFC107") +
+  geom_line(data = cv_metrics3 %>% filter(.metric == "rsq"),
+    mapping = aes(x = id,y = .estimate,
+    color = "Model 3 (New model)", group = 1)) +
+    scale_color_manual(name = "Regression Model",
+    breaks=c("Model 1", "Model 3 (New model)"),
+    values=c("Model 1" = "#1E88E5",
+    "Model 3 (New model)" = "#FFC107")) +
+  labs(
+    title = "Visualization of R-squared for each Cross Validation Metric",
+    subtitle = "Separated by Model",
+    y = "Rsq Value",
+    x = "Fold"
+  )
+```
+
+
 
 ```{r}
 #| label: output final model
 
-choco_test_fit <- choco_wflow1 %>%
+choco_test_fit <- choco_wflow3 %>%
   fit(data = choco_testing)
 
 tidy(choco_test_fit, conf.int = TRUE) %>%
-  kable()
-
+  kable(digits = 3)
 
 ```
 
 We have assumed that this data fits the condition
+
+
