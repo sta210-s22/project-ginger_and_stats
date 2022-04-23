@@ -84,6 +84,8 @@ Before we began modeling, we first performed some Exploratory Data Analysis to d
 ### Shape of Ratings
 
 ```{r}
+#| label: fig-rating
+#| fig-cap: "Ratings"
 ggplot(chocolate, aes(rating)) +
   geom_histogram(binwidth = 0.25, color = "white")+
   labs(
@@ -92,7 +94,7 @@ ggplot(chocolate, aes(rating)) +
   )
 ```
 
-We can see that the distribution of the rating is unimodal, centered around the value of 3 or 3.25. It is also left-skewed, with some possible outliers of value 1 or 1.5.
+From @fig-rating, we can see that the distribution of the rating is unimodal, centered around the value of 3 or 3.25. It is also left-skewed, with some possible outliers of value 1 or 1.5.
 
 ```{r}
 chocolate %>%
@@ -107,17 +109,12 @@ chocolate %>%
 ### Cocoa Percent
 
 ```{r}
-#| label: cocoa-percent
+#| label: fig-percent-rating
+#| fig-cap: "Cocoa Percent and Ratings"
 
 chocolate$cocoa_percent <- as.numeric(gsub('[,%]', '', chocolate$cocoa_percent))
 
 chocolate$rating <- as.character(chocolate$rating) 
-
-ggplot(data= chocolate, aes(x= cocoa_percent)) + geom_histogram() +
-  labs(title = "Distribution of Cocoa Percent",
-       y = "Count",
-       x = "Cocoa Percent")
-
 ggplot(data= chocolate, aes(x= cocoa_percent, y= rating)) + geom_boxplot() +
   labs(title = "Distribution of Cocoa Percent versus Chocolate Rating",
        y = "Rating",
@@ -126,9 +123,7 @@ ggplot(data= chocolate, aes(x= cocoa_percent, y= rating)) + geom_boxplot() +
 chocolate$rating <- as.numeric(chocolate$rating) 
 ```
 
-From the distribution of cocoa_percent, we see that the distribution is roughly symmetric and unimodal, and centered around 72 percent, and has apparent outliers around 55 percent and 100 percent.
-
-From the boxplot, we can see a general rough trend that as the median cocoa percent is lower, the rating of the chocolate bar is higher. Furthermore, there appear to be a lot of outliers in the middle ratings (2.25 - 3.75), which might be due to the fact that that is the rating for the bulk of the chocolates tested.
+From @fig-percent-rating, we can see a general rough trend that as the median cocoa percent is lower, the rating of the chocolate bar is higher. Furthermore, there appear to be a lot of outliers in the middle ratings (2.25 - 3.75), which might be due to the fact that that is the rating for the bulk of the chocolates tested.
 
 ### Ingredients
 
@@ -161,7 +156,8 @@ chocolate <- chocolate %>%
 ```
 
 ```{r}
-#| label: ingredients-seperate-vis
+#| label: fig-ingre-vis
+#| fig-cap: "Rating and Ingredients"
 
 pL <- ggplot(chocolate, aes(lecithin, fill = as.factor(rating))) +
   geom_bar(position = "fill") + 
@@ -192,10 +188,11 @@ pSa <- ggplot(chocolate, aes(salt, fill = as.factor(rating))) +
 
 ```
 
-From this visualization, we can see that the presence of salt and vanilla seem to affect the rating the most out of all the predicters. The presence of salt and vanilla results in more lower ratings, while the amount of high and low ratings remains roughly the same with/without the presence of cocoa butter and lecithin.
+From @fig-ingre-vis, we can see that the presence of salt and vanilla seem to affect the rating the most out of all the predicters. The presence of salt and vanilla results in more lower ratings, while the amount of high and low ratings remains roughly the same with/without the presence of cocoa butter and lecithin.
 
 ```{r}
-#| label: num-of-ingredients-variable-and-vis
+#| label: fig-num-ingres
+#| fig-cap: "Number of Ingredients and Ratings"
 
 chocolate <- chocolate %>%
   mutate(
@@ -212,12 +209,13 @@ ggplot(chocolate, aes(num_ingres))+
   )
 ```
 
-In this visualization we regard the NA value of ingredients as 0, which means we should understand this as nonrecorded value instead of no ingredients are presented in the chocolate. This visualization showcases a right skewed distribution for the number of ingredients. The median is somewhere around 3 ingredients, and there appears to be an outlier centered around 0. This could be as many chocolate bars use at least one of the common ingredients, and it is quite rare for a chocolate bar not to have any of those ingredients.
+In @fig-num-ingres, we regard the NA value of ingredients as 0, which means we should understand this as nonrecorded value instead of no ingredients are presented in the chocolate. This visualization showcases a right skewed distribution for the number of ingredients. The median is somewhere around 3 ingredients, and there appears to be an outlier centered around 0. This could be as many chocolate bars use at least one of the common ingredients, and it is quite rare for a chocolate bar not to have any of those ingredients.
 
 ### Most Memorable Characteristic
 
 ```{r}
-#| label: memorable-char-vis
+#| label: fig-mem-char
+#| fig-cap: "Memorable Characteristics"
 
 tidy_chocolate<- chocolate %>% 
   unnest_tokens(word, most_memorable_characteristics)
@@ -236,12 +234,13 @@ tidy_chocolate %>%
   scale_x_log10() 
 ```
 
-From this visualization, we can see that the phrases and most memorable charactersists that were often associated with a higher rating were "balanced" and "complex", as well as fruity chocolate like "fruit", "Cardamon", "floral".
+@fig-mem-char is taken from https://juliasilge.com/blog/chocolate-ratings/. From this visualization, we can see that the phrases and most memorable charactersists that were often associated with a higher rating were "balanced" and "complex", as well as fruity chocolate like "fruit", "Cardamon", "floral".
 
 ### Country Bean of Origin
 
 ```{r}
-#| label: country-bean-of-origin-vis
+#| label: fig-cob-vis
+#| fig-cap: "Country of Bean Origin"
 
 chocolate_modified <- chocolate %>%
   mutate(name_long = country_of_bean_origin) %>%
@@ -259,12 +258,13 @@ ggplot(data = chocworld_data) +
   labs(title = "Map of countries where cacao beans were produced")
 ```
 
-This map shows that the majority of cacao beans are produced in central America, South America, Asia, and Africa.
+@fig-cob-vis shows that the majority of cacao beans are produced in central America, South America, Asia, and Africa.
 
 ### Company Location
 
 ```{r}
-#| label: company-location-vis
+#| label: fig-comp-loc
+#| fig-cap: "Chocolate Company Location"
 
 chocolate_modified2 <- chocolate %>%
   mutate(name_long = case_when(
@@ -288,60 +288,9 @@ company_loc_count <- chocolate %>%
     count(company_location, sort = TRUE)
 ```
 
-This map shows that the majority of countries that chocolate companies are located in are concentrated in North America and Europe, and that the US is host to the largest amount of chocolate companies.
-
-### Review Date
-
-```{r}
-#| label: review-date-vis
-
-ggplot(chocolate, aes(review_date))+
-  geom_bar() + 
-  labs(
-    title = "Distribution of Review Date",
-    x = "Year",
-    y = "Count"
-  )
-```
-
-Here, we can see that the distribution of chocolate bars reviewed over time has a roughly unimodal distribution with a peak around 2015. Furthermore there was a signficant dip in 2020, probably due to the COVID-19 Pandemic, as well as a dip in 2017, due to unknown reasons. The distribution is centered around 2014 and is roughly symmetric.
-
-```{r}
-#| label: review date summary statistics
-
-# statistics of review dates
-
-chocolate %>%
-  summarise(mean = mean(review_date),
-            median = median(review_date),
-            sd = sd(review_date))
-```
-
-```{r}
-#| label: review date summary statistics vis
-
-#review date vs cocoa_percent and ratings
-
-chocolate <- chocolate %>%
-  mutate(
-    date_fct = as.factor(review_date)
-  )
-
-ggplot(chocolate, aes(x = rating, fill = as.factor(review_date))) + 
-  geom_density(alpha = .5) + 
-  theme_minimal() +
-  facet_wrap(~ as.factor(review_date)) + 
-  guides(fill = FALSE) + labs(x = 'Rating', y = 'Density')+
-  labs(
-    title = "Distribution of rating over 12 years from 2006 - 2021"
-  )
-```
-
-This visualization showcases the distribution of ratings for each review year. There is no apparent change or pattern to the change in ratings of years, and it appears that ratings from 2.5 - 3.25 compose the bulk of the ratings each year.
+@fig-comp-loc shows that the majority of countries that chocolate companies are located in are concentrated in North America and Europe, and that the US is host to the largest amount of chocolate companies.
 
 \pagebreak
-
-For cleaning the most memorable characteristic column, we assumed that the first word in the column was the dominant memorable characteristic. From there, we created groups out of the most popular words. For example, characteristics that contained the word "fruit" or "berry" were grouped together into "fruity".
 
 ```{r}
 chocolate <- chocolate %>%
@@ -483,7 +432,7 @@ chocolate_clean <- chocolate_clean %>%
 
 To get our data ready for modeling, we first performed some data cleaning.
 
-1.  One of the variables that we are using in our modeling is a list of most memorable characteristics by the rater. To organize this variable in a way that can be used for our model, we assumed that the first characteristic listed was the most noticeable and made the biggest lasting impression. So, we only kept the first characteristic. From there, because there are a variety of characteristics, we decided to group them into some general groups: fatty_smooth, roast, strong_sweet, rough_texture, nutty, greasy, spiced, floral, fruity, complex, and other. For example, we put "cream" and "dairy" in the category of "fatty_smooth". 
+1.  One of the variables that we are using in our modeling is a list of most memorable characteristics by the rater. To organize this variable in a way that can be used for our model, we assumed that the first characteristic listed was the dominant characteristic and made the biggest lasting impression. So, we only kept the first characteristic. From there, because there are a variety of characteristics, we decided to group them into some general groups: fatty_smooth, roast, strong_sweet, rough_texture, nutty, greasy, spiced, floral, fruity, complex, and other. For example, we put "cream" and "dairy" in the category of "fatty_smooth". Another example is that characteristics that contained the word "fruit" or "berry" were grouped together into "fruity".
 
 2.  Next, we also decided to simplify the locations of cocoa bean production. From our EDA, we learned that cocoa bean production locations are mostly based in South America, Asia, and Africa. So, we categorized the countries of cocoa bean production by the most popular continent categories: South America, Africa, Asia, and Other. 
 
@@ -495,7 +444,7 @@ To get our data ready for modeling, we first performed some data cleaning.
 
 ### Modeling
 
-Our main goal of this analysis is to understand how the characteristics of a chocolate can explain its rating. Although the rating only goes from 1 to 5 in 0.25 increments, we treated rating as a quantitative variable. Therefore, we used a linear regression model to fit and predict the rating from the features of a chocolate. We decided compare 2 models: a full model that had all the explanatory variables that we were interested in (location of cocoa bean production, location of chocolate company, number of ingredients, presence of vanilla, presence of salt, top memorable characteristics, and cocoa percentage) and a model with just the "taste" predictors (number of ingredients, presence of vanilla, presence of salt, top memorable characteristics, and cocoa percentage). We defined Model 1 as our model with just the "taste" predictors and Model 2 as our full model. 
+Our main goal of this analysis is to understand how the characteristics of a chocolate can explain its rating. Although the rating only goes from 1 to 5 in 0.25 increments, we treated rating as a quantitative continuous variable. Therefore, we used a linear regression model to fit and predict the rating from the features of a chocolate. We decided compare 2 models: a full model that had all the explanatory variables that we were interested in (location of cocoa bean production, location of chocolate company, number of ingredients, presence of vanilla, presence of salt, top memorable characteristics, and cocoa percentage) and a model with just the "taste" predictors (number of ingredients, presence of vanilla, presence of salt, top memorable characteristics, and cocoa percentage). We defined Model 1 as our model with just the "taste" predictors and Model 2 as our full model. 
 
 To evaluate which model performed better, we decided to perform a cross-validation and compare R-squared and RMSE values instead.
 
@@ -588,7 +537,8 @@ cv_metrics2 %>%
 ```
 
 ```{r}
-#| label: model compararsion vis
+#| label: fig-model-comp1
+#| fig-cap: "Comparing Model 1 and Model 2"
 
 #RMSE Visualization
 ggplot() +
@@ -644,7 +594,7 @@ ggplot() +
 
 ```
 
-As both models have similar RMSE and R-squared values for each fold in cross-validation we will choose the first model as it has fewer predictor variables and aligns with the goals of parsimony, as it is a less complicated model yet doesn't sacrifice predictive capability.
+As both models have similar RMSE and R-squared values for each fold in cross-validation (as seen in Table 1 and 2 and in @fig-model-comp1 ), we will choose the first model as it has fewer predictor variables and aligns with the goals of parsimony, as it is a less complicated model yet doesn't sacrifice predictive capability.
 
 ```{r}
 #| label: print-out-model
@@ -657,42 +607,11 @@ choco_fit <- linear_reg() %>%
 
 tidy(choco_fit) %>%
   kable(digits=3, caption= "Model 1 Fit")
-
 ```
 
-```{r}
-#| label: residuals-pattern-explanatory
+Because our R-squared values are so low, we wanted to explore other options. From https://juliasilge.com/blog/chocolate-ratings/, Dr. Silge made a model predicting a model to predict ratings from most-memorable characteristics. Using her model as a footprint, we decided to add to the most memorable characteristic and make a new model. Her model found which words were more associated with higher or lower ratings. We decided to take her words and create variables out of them. For example, we have a categorical variable detecting whether or not "cocoa" appears in most-memorable characteristics. We ended looking for the following words: cocoa, off, chemical, fruit, creamy, complex and bitter.
 
-choco_aug <- augment(choco_fit$fit)
-
-ggplot(data= choco_aug, aes(x= .fitted, y= .resid, color= vanilla)) + 
-  geom_point() + 
-  geom_line(y=0, color= "blue")
-```
-
-```{r}
-#| label: residuals-pattern-rating-1
-
-choco_aug <- augment(choco_fit$fit)
-
-ggplot(data= choco_aug, aes(x= .fitted, y= .resid, color= rating)) + 
-  geom_point() + 
-  geom_line(y=0, color= "blue") + 
-  scale_colour_gradient2(low= "red", 
-                         high= "blue")
-```
-
-```{r}
-#| label: residuals-pattern-rating-2
-
-choco_aug <- augment(choco_fit$fit)
-
-ggplot(data= choco_aug, aes(x= .fitted, y= .resid, color= rating)) + 
-  geom_point() + 
-  geom_line(y=0, color= "blue") + 
-  scale_colour_gradient2(low= "red", 
-                         high= "blue")
-```
+So, we created a 3rd model with the variables: number of ingredients, presence of vanilla, presence of salt, top memorable characteristic, cocoa percentage, presence of "cocoa" in most memorable characteristics, presence of "off" in most memorable characteristics, and so on with the other words/characteristics mentioned above.
 
 ```{r}
 #| label: new-model-fit
@@ -727,7 +646,10 @@ cv_metrics3 %>%
 ```
 
 ```{r}
-#RMSE Visualization
+#| label: fig-model-comp2
+#| fig-cap: "Comparing Model 1 and 3"
+
+
 ggplot() +
   geom_point(data = cv_metrics1 %>% filter(.metric == "rmse"),
     mapping = aes(x = id, y = .estimate),
@@ -780,6 +702,10 @@ ggplot() +
   )
 ```
 
+From Table 4 and @fig-model-comp2, we can see that the model has improved.
+
+# Discussion
+
 ```{r}
 #| label: output final model
 
@@ -799,10 +725,23 @@ $$
 
 Interpretation of a few coefficients:
 
-Question: How do you inteerpret memorable characteristics in an intercept?
+Question: How do you interpret memorable characteristics in an intercept?
 
 Cocoa Percent: For every additional percentage in cocoa percent, the predicted rating is expected to decrease by .006 points, on average, with all else held constant.
 
 TopMemorableFloral: If a chocolate bar is noted as having the memorable characteristic of Floral Notes, the predicted rating is expected to decrease by -.023 rating points compared to chocolate bars that don't have this memorable characteristic, on average, with all else held constant.
 
-In the future, perhaps a more expansive dataset and knowledge of more regression techniques, like ordinal regression will help us gain more predictive probability.
+Although we did improve our model in the 3rd model and answered our hypotheses, there are additional items for the future. One of the most obvious ones is trying ordinal logistic regression. For our project, we chose to use linear regression in large part due to the fact that we have not covered ordinal logistic regression. Because our response variable (rating) is not truly continuous, this has influenced the shape of our residuals (as seen in @fig-resid ), making it hard to verify if conditions have been met for linear regression. While ordinal logistic regression would not guarantee a better model, our response variable could perhaps fit the conditions of the ordinal logistic regression better. In addition to trying a different type of model, getting more expansive data (taster's chocolate preferences, quality of chocolate, etc. ) could also potentially improve the model.
+
+```{r}
+#| label: fig-resid
+#| fig-cap: "Residuals and Ratings"
+
+choco_aug <- augment(choco_fit$fit)
+
+ggplot(data= choco_aug, aes(x= .fitted, y= .resid, color= rating)) + 
+  geom_point() + 
+  geom_line(y=0, color= "blue") + 
+  scale_colour_gradient2(low= "red", 
+                         high= "blue")
+```
