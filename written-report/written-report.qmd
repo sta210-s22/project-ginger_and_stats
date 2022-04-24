@@ -617,7 +617,7 @@ set.seed(1200)
 choco_spec <- linear_reg() %>%
   set_engine("lm")
 
-choco_rec3 <- recipe(rating ~ cocoa_percent + vanilla + salt + num_ingres + top_memorable +
+choco_rec3 <- recipe(rating ~ cocoa_percent + vanilla + salt + num_ingres +
                        isCocoa + isOff + isChemical + isFruit + 
                        isCreamy + isComplex + isBitter, data = choco_training) %>%
   step_center(num_ingres, cocoa_percent) %>%
