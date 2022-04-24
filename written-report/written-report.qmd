@@ -715,7 +715,7 @@ tidy(choco_test_fit, conf.int = TRUE) %>%
 
 $$
 \begin{aligned}
-\hat{rating} = & 3.277  - .006 \times CocoaPercent + .027 \times NumIngredients \\ & + 0.128 \times isCocoa + 0.212\times isOff - .811 \times isChemical \\ & + .060 \times is Fruit +.339 \times isCreamy + .359 \times isComplex \\ &-.560 \times isBitter - .291 \times Vanilla_x1 - .165 \times Salt_X1 \\ &-.019 \times topMemFattySmooth  -.023 \times topMemFloral \\ &+ .176 \times topMemFruity + .148 \times topMemGreasy + .051 \times topMemNutty \\ & - .122 \times topMemOther  - .137 \times topMemRoast - .201 \times topMemRough \\ &- .044 \times topMemSpiced - .012 \times topMemStrongSweet
+\hat{rating} = & 3.216  - .007 \times CocoaPercent + .027 \times NumIngredients \\ & + 0.149 \times isCocoa - 0.232\times isOff - .792 \times isChemical \\ & + .121 \times is Fruit +.361 \times isCreamy + .361 \times isComplex \\ &-.548 \times isBitter - .305 \times Vanilla_{X1} - .122 \times Salt_{X1} \\ 
 \end{aligned}
 $$
 
