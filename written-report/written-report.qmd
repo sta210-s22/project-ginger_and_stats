@@ -10,7 +10,7 @@ editor: visual
 knitr::opts_chunk$set(echo = FALSE, 
                       warning = FALSE, 
                       message = FALSE,
-                      fig.width = 10, fig.asp = 0.618, out.width = "90%",
+                      fig.width = 10, fig.asp = 0.618, out.width = "70%",
   fig.retina = 3, dpi = 300, fig.align = "center")
 ```
 
@@ -71,7 +71,7 @@ The general characteristics that will be our main interest are described as foll
 
 The data dictionary can be found [here](https://github.com/sta210-s22/project-ginger_and_stats/tree/main/data).
 
-## Methodology
+# Methodology
 
 ### Exploratory Data Analysis (EDA)
 
@@ -90,21 +90,22 @@ ggplot(chocolate, aes(rating)) +
   )
 ```
 
-From @fig-rating, we can see that the distribution of the rating is unimodal, centered around the value of 3 or 3.25. It is also left-skewed, with some possible outliers of value 1 or 1.5.
-
 ```{r}
-chocolate %>%
+rating_stat <- chocolate %>%
   summarise(
     mean = mean(rating),
     median = median(rating),
     sd = sd(rating)
-  ) %>%
-  kable(digits = 3)
+  ) 
 ```
+
+From @fig-rating, we can see that the distribution of the rating is unimodal, centered around the value of 3 or 3.25. It is also left-skewed, with some possible outliers of value 1 or 1.5. The mean of rating is `r round(rating_stat$mean, 3)`, the median is `r round(rating_stat$median, 3)`, and the standard deviation is `r round(rating_stat$sd, 3)`
 
 ### Cocoa Percent
 
-```{r}
+From @fig-percent-rating, we can see a general rough trend that as the median cocoa percent is lower, the rating of the chocolate bar is higher. Furthermore, there appear to be a lot of outliers in the middle ratings (2.25 - 3.75), which might be due to the fact that that is the rating for the bulk of the chocolates tested.
+
+```{r fir.width = 12}
 #| label: fig-percent-rating
 #| fig-cap: "Cocoa Percent and Ratings"
 
@@ -116,12 +117,14 @@ ggplot(data= chocolate, aes(x= cocoa_percent, y= rating)) + geom_boxplot() +
        y = "Rating",
        x = "Chocolate Rating")
 
+
 chocolate$rating <- as.numeric(chocolate$rating) 
 ```
 
-From @fig-percent-rating, we can see a general rough trend that as the median cocoa percent is lower, the rating of the chocolate bar is higher. Furthermore, there appear to be a lot of outliers in the middle ratings (2.25 - 3.75), which might be due to the fact that that is the rating for the bulk of the chocolates tested.
 
 ### Ingredients
+
+From @fig-ingre-vis, we can see that the presence of salt and vanilla seem to affect the rating the most out of all the predicters. The presence of salt and vanilla results in more lower ratings, while the amount of high and low ratings remains roughly the same with/without the presence of cocoa butter and lecithin.
 
 ```{r}
 #| label: ingredients-seperate
@@ -184,9 +187,9 @@ pSa <- ggplot(chocolate, aes(salt, fill = as.factor(rating))) +
 
 ```
 
-From @fig-ingre-vis, we can see that the presence of salt and vanilla seem to affect the rating the most out of all the predicters. The presence of salt and vanilla results in more lower ratings, while the amount of high and low ratings remains roughly the same with/without the presence of cocoa butter and lecithin.
 
-```{r}
+
+```{r include = F}
 #| label: fig-num-ingres
 #| fig-cap: "Number of Ingredients and Ratings"
 
@@ -205,7 +208,10 @@ ggplot(chocolate, aes(num_ingres))+
   )
 ```
 
-In @fig-num-ingres, we regard the NA value of ingredients as 0, which means we should understand this as nonrecorded value instead of no ingredients are presented in the chocolate. This visualization showcases a right skewed distribution for the number of ingredients. The median is somewhere around 3 ingredients, and there appears to be an outlier centered around 0. This could be as many chocolate bars use at least one of the common ingredients, and it is quite rare for a chocolate bar not to have any of those ingredients.
+```{r}
+# In @fig-num-ingres, we regard the NA value of ingredients as 0, which means we should understand this as nonrecorded value instead of no ingredients are presented in the chocolate. This visualization showcases a right skewed distribution for the number of ingredients. The median is somewhere around 3 ingredients, and there appears to be an outlier centered around 0. This could be as many chocolate bars use at least one of the common ingredients, and it is quite rare for a chocolate bar not to have any of those ingredients.
+```
+
 
 ### Most Memorable Characteristic
 
@@ -234,6 +240,8 @@ tidy_chocolate %>%
 
 ### Country Bean of Origin
 
+@fig-cob-vis shows that the majority of cacao beans are produced in central America, South America, Asia, and Africa.
+
 ```{r}
 #| label: fig-cob-vis
 #| fig-cap: "Country of Bean Origin"
@@ -254,9 +262,10 @@ ggplot(data = chocworld_data) +
   labs(title = "Map of countries where cacao beans were produced")
 ```
 
-@fig-cob-vis shows that the majority of cacao beans are produced in central America, South America, Asia, and Africa.
 
 ### Company Location
+
+@fig-comp-loc shows that the majority of countries that chocolate companies are located in are concentrated in North America and Europe, and that the US is host to the largest amount of chocolate companies.
 
 ```{r}
 #| label: fig-comp-loc
@@ -284,7 +293,6 @@ company_loc_count <- chocolate %>%
     count(company_location, sort = TRUE)
 ```
 
-@fig-comp-loc shows that the majority of countries that chocolate companies are located in are concentrated in North America and Europe, and that the US is host to the largest amount of chocolate companies.
 
 \pagebreak
 
@@ -434,7 +442,7 @@ To get our data ready for modeling, we first performed some data cleaning.
 
 3.  Similarly, from our EDA, we learned that the company locations are mostly based in North America and Europe. So, we categorized the countries of cocoa bean production by the most popular continent categories: North America, Europe, and Other. 
 
-4.  We created a new variable that was the number of ingredients. 
+4.  We created a new variable that was the number of ingredients. Since there are NA value in the ingredients, we mark these values with 0, though it is kind of unreasonable to assume that a chocolate doesn't have any ingredients composed to it. The median and mean are around 3. 
 
 5.  In addition to the number of ingredients, we created 2 new variables: vanilla and salt. These variables indicated whether their specified ingredient was listed in the ingredients list. From our EDA, we learned that the presence of salt and vanilla seems to affect the rating the most out of all the ingredients.
 
@@ -589,7 +597,7 @@ cv_metrics3 %>%
 #| fig-cap: "Comparing Three Models"
 
 #RMSE Visualization
-ggplot() +
+p1 <- ggplot() +
   geom_point(data = cv_metrics1 %>% filter(.metric == "rmse"),
     mapping = aes(x = id, y = .estimate),
     color = "#1E88E5") +
@@ -622,7 +630,7 @@ ggplot() +
 
 #RSQ Visualization
 
-ggplot() +
+p2 <- ggplot() +
   geom_point(data = cv_metrics1 %>% filter(.metric == "rsq"),
     mapping = aes(x = id, y = .estimate),
     color = "#1E88E5") +
@@ -652,6 +660,7 @@ ggplot() +
     x = "Fold"
   )
 
+p1 / p2
 ```
 
 # Discussion
@@ -663,8 +672,8 @@ choco_test_fit <- choco_wflow3 %>%
   fit(data = choco_testing)
 
 tidy(choco_test_fit, conf.int = TRUE) %>%
-  kable(digits = 3)
-
+  kable(digits = 3) %>%
+  kable_styling(position = "center")
 ```
 
 $$
