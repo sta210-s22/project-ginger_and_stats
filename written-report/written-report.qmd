@@ -105,24 +105,11 @@ rating_stat <- chocolate %>%
 
 From @fig-rating, we can see that the distribution of the rating is unimodal, centered around the value of 3 or 3.25. It is also left-skewed, with some possible outliers of value 1 or 1.5. The mean of rating is `r round(rating_stat$mean, 3)`, the median is `r round(rating_stat$median, 3)`, and the standard deviation is `r round(rating_stat$sd, 3)`
 
-### Cocoa Percent
-
-From @fig-percent-rating, we can see a general rough trend that as the median cocoa percent is lower, the rating of the chocolate bar is higher. Furthermore, there appear to be a lot of outliers in the middle ratings (2.25 - 3.75), which might be due to the fact that that is the rating for the bulk of the chocolates tested.
-
-```{r fir.width = 12}
+```{r}
 #| label: fig-percent-rating
-#| fig-cap: "Cocoa Percent and Ratings"
 
 chocolate$cocoa_percent <- as.numeric(gsub('[,%]', '', chocolate$cocoa_percent))
 
-chocolate$rating <- as.character(chocolate$rating) 
-ggplot(data= chocolate, aes(x= cocoa_percent, y= rating)) + geom_boxplot() +
-  labs(title = "Distribution of Cocoa Percent versus Chocolate Rating",
-       y = "Rating",
-       x = "Chocolate Rating")
-
-
-chocolate$rating <- as.numeric(chocolate$rating) 
 ```
 
 ### Ingredients
