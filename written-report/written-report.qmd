@@ -45,11 +45,7 @@ Based on our research question, we have the following hypotheses:
 
 1.  A lower cocoa percentage is linked to a higher rating. 
 
-2.  Chocolate companies that are located in the USA or a European country will have higher ratings. 
-
-3.  Cocoa percentage and ingredients are the strongest predictors. 
-
-4.  Country of bean origin will not be a strong predictor. 
+2.  Cocoa percentage and ingredients are the significant predictors. 
 
 References:
 
@@ -537,7 +533,7 @@ cv_metrics2 %>%
 ```
 
 ```{r}
-#| label: fig-model-comp1
+#| label: fig-model
 #| fig-cap: "Comparing Model 1 and Model 2"
 
 #RMSE Visualization
@@ -594,7 +590,7 @@ ggplot() +
 
 ```
 
-As both models have similar RMSE and R-squared values for each fold in cross-validation (as seen in Table 1 and 2 and in @fig-model-comp1 ), we will choose the first model as it has fewer predictor variables and aligns with the goals of parsimony, as it is a less complicated model yet doesn't sacrifice predictive capability.
+As both models have similar RMSE and R-squared values for each fold in cross-validation (as seen in Table 1 and 2 and in @fig-model ), we will choose the first model as it has fewer predictor variables and aligns with the goals of parsimony, as it is a less complicated model yet doesn't sacrifice predictive capability.
 
 ```{r}
 #| label: print-out-model
