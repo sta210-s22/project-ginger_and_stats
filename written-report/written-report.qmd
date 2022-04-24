@@ -4,13 +4,15 @@ subtitle: "STA 210 - Project"
 author: "Ginger and Stats - Aimi Wen, Rakshita Ramakrishna, Nathan Nguyen"
 format: pdf
 editor: visual
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, 
                       warning = FALSE, 
                       message = FALSE,
-                      fig.width = 10, fig.asp = 0.618, out.width = "70%",
+                      fig.width = 8, fig.asp = 0.618, out.width = "70%",
   fig.retina = 3, dpi = 300, fig.align = "center")
 ```
 
@@ -46,6 +48,8 @@ Based on our research question, we have the following hypotheses:
 1.  A lower cocoa percentage is linked to a higher rating. 
 
 2.  Cocoa percentage and ingredients are the significant predictors. 
+
+From our modeling and our analysis, we came up with a model that proved both of our hypotheses as correct. Although our model provided interesting insights, our R-Squared values were relatively low (hovering at around 0.2 during cross-validation). So, we also offered suggestion for other model and data explorations.
 
 References:
 
@@ -121,7 +125,6 @@ ggplot(data= chocolate, aes(x= cocoa_percent, y= rating)) + geom_boxplot() +
 chocolate$rating <- as.numeric(chocolate$rating) 
 ```
 
-
 ### Ingredients
 
 From @fig-ingre-vis, we can see that the presence of salt and vanilla seem to affect the rating the most out of all the predicters. The presence of salt and vanilla results in more lower ratings, while the amount of high and low ratings remains roughly the same with/without the presence of cocoa butter and lecithin.
@@ -187,8 +190,6 @@ pSa <- ggplot(chocolate, aes(salt, fill = as.factor(rating))) +
 
 ```
 
-
-
 ```{r include = F}
 #| label: fig-num-ingres
 #| fig-cap: "Number of Ingredients and Ratings"
@@ -211,7 +212,6 @@ ggplot(chocolate, aes(num_ingres))+
 ```{r}
 # In @fig-num-ingres, we regard the NA value of ingredients as 0, which means we should understand this as nonrecorded value instead of no ingredients are presented in the chocolate. This visualization showcases a right skewed distribution for the number of ingredients. The median is somewhere around 3 ingredients, and there appears to be an outlier centered around 0. This could be as many chocolate bars use at least one of the common ingredients, and it is quite rare for a chocolate bar not to have any of those ingredients.
 ```
-
 
 ### Most Memorable Characteristic
 
@@ -262,7 +262,6 @@ ggplot(data = chocworld_data) +
   labs(title = "Map of countries where cacao beans were produced")
 ```
 
-
 ### Company Location
 
 @fig-comp-loc shows that the majority of countries that chocolate companies are located in are concentrated in North America and Europe, and that the US is host to the largest amount of chocolate companies.
@@ -292,7 +291,6 @@ ggplot(data = chocworld_data1) +
 company_loc_count <- chocolate %>%
     count(company_location, sort = TRUE)
 ```
-
 
 \pagebreak
 
@@ -540,7 +538,6 @@ cv_metrics2 %>%
   #select(adj.r.squared, AIC, BIC)
 ```
 
-
 As both models have similar RMSE and R-squared values for each fold in cross-validation (as seen in Table 1 and 2 and in @fig-model ), we will choose the first model as it has fewer predictor variables and aligns with the goals of parsimony, as it is a less complicated model yet doesn't sacrifice predictive capability.
 
 ```{r include = F}
@@ -678,17 +675,38 @@ tidy(choco_test_fit, conf.int = TRUE) %>%
 
 $$
 \begin{aligned}
-\hat{rating} = & 3.216  - .007 \times CocoaPercent + .027 \times NumIngredients \\ & + 0.149 \times isCocoa - 0.232\times isOff - .792 \times isChemical \\ & + .121 \times is Fruit +.361 \times isCreamy + .361 \times isComplex \\ &-.548 \times isBitter - .305 \times Vanilla_{X1} - .122 \times Salt_{X1} \\ 
+\hat{rating} = & 3.210  - .009 \times CocoaPercent + .043 \times NumIngredients \\ & + 0.218 \times isCocoa - 0.134\times isOff - .619 \times isChemical \\ & + .185 \times is Fruit +.233 \times isCreamy + .194 \times isComplex \\ &-.339 \times isBitter - .332 \times Vanilla_{X1} - .207 \times Salt_{X1} \\ 
 \end{aligned}
 $$
 
-Interpretation of a few coefficients:
+```{r}
+#| label: finding-mean
 
-Question: How do you interpret memorable characteristics in an intercept?
+mean_cocoa= mean(chocolate_clean$cocoa_percent)
+mean_numingres= mean(chocolate_clean$num_ingres)
+```
 
-Cocoa Percent: For every additional percentage in cocoa percent, the predicted rating is expected to decrease by .006 points, on average, with all else held constant.
+For a chocolate bar that has `r round(mean_cocoa,0)` cocoa percent, `r round(mean_numingres, 0)` number of ingredients, does not have the words "cocoa," "off", "chemical", "fruit", "creamy", "complex" and "bitter" listed in its most memorable characteristics, and does not contain vanilla or salt in its ingredients, the predicted rating is expected to be 3.210, on average. 
 
-TopMemorableFloral: If a chocolate bar is noted as having the memorable characteristic of Floral Notes, the predicted rating is expected to decrease by -.023 rating points compared to chocolate bars that don't have this memorable characteristic, on average, with all else held constant.
+Before we started our analysis, we had 2 hypotheses: a lower cocoa percentage is linked to a higher rating and cocoa percentage and number of ingredients are significant predictors. For our first hypothesis, we found that this is true. Because if we interpret the coefficient of the cocoa percentage: for each percentage increase in cocoa percentage, we expect the rating to decrease on average by 0.009, all else held constant. 
+
+For our second hypothesis, we found that the p-value for cocoa-percent is 0.008 and the p-value for number of ingredients is 0.008. Because the p-values are less than 0.05, we do have enough evidence to reject the null hypotheses.
+
+$$
+\begin{aligned}
+H_0 &: \beta_{cocoa\_percent} = 0 \\
+H_1 &: \beta_{cocoa\_percent} \neq 0\\
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+H_0 &: \beta_{number\_ingredients} = 0 \\
+H_1 &: \beta_{number\_ingredients} \neq 0\\
+\end{aligned}
+$$
+
+Beyond our hypotheses, our model has revealed other findings. For example, out of the characteristics in memorable characteristics, the word "creamy" has the magnitude in change for increasing ratings: all else held constant, if "creamy" is included in most memorable characteristic, we expect the predicted rating to increase by 0.223, on average. On the opposite end, the word "chemical" has the largest magnitude in change for decreasing ratings. All else held constant, if "chemical" is included in the most memorable characteristic, we expect the predicted rating to decrease by 0.619, on average. Interestingly, though increasing the number of ingredients is expected to increase the predicted rating, having vanilla or having salt as an ingredient is expected to decrease the predicted rating. This raises the question of what can be done in future work. Are there other ingredients that would increase ratings? Would ingredients' effects on the chocolate offset the expected increase in predicted ratings from the number of ingredients? Additionally, although our model offered insight into what could increase or decrease chocolate ratings, our R-square values are relatively low (see Table 4), leaving us with the question of why. What other variables should be considered? What can be done with our model to improve it? Or, is taste in chocolate truly subjective? Can there be a model that predicts ratings with more accuracy?
 
 Although we did improve our model in the 3rd model and answered our hypotheses, there are additional items for the future. One of the most obvious ones is trying ordinal logistic regression. For our project, we chose to use linear regression in large part due to the fact that we have not covered ordinal logistic regression. Because our response variable (rating) is not truly continuous, this has influenced the shape of our residuals (as seen in @fig-resid ), making it hard to verify if conditions have been met for linear regression. While ordinal logistic regression would not guarantee a better model, our response variable could perhaps fit the conditions of the ordinal logistic regression better. In addition to trying a different type of model, getting more expansive data (taster's chocolate preferences, quality of chocolate, etc. ) could also potentially improve the model.
 
