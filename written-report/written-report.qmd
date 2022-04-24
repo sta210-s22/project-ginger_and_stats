@@ -451,7 +451,7 @@ To evaluate which model performed better, we decided to perform a cross-validati
 ```{r}
 #| label: inital-split
 
-set.seed(2100)
+set.seed(2000)
 choco_split <- initial_split(chocolate_clean)
 choco_training <- training(choco_split)
 choco_testing <- testing(choco_split)
@@ -532,9 +532,61 @@ cv_metrics2 %>%
   #select(adj.r.squared, AIC, BIC)
 ```
 
+
+As both models have similar RMSE and R-squared values for each fold in cross-validation (as seen in Table 1 and 2 and in @fig-model ), we will choose the first model as it has fewer predictor variables and aligns with the goals of parsimony, as it is a less complicated model yet doesn't sacrifice predictive capability.
+
+```{r include = F}
+#| label: print-out-model
+
+choco_fit <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(rating ~ cocoa_percent + vanilla + salt +
+        num_ingres + top_memorable, data =
+        chocolate_clean)
+
+tidy(choco_fit) %>%
+  kable(digits=3, caption= "Model 1 Fit")
+```
+
+Because our R-squared values are so low, we wanted to explore other options. From https://juliasilge.com/blog/chocolate-ratings/, Dr. Silge made a model predicting a model to predict ratings from most-memorable characteristics. Using her model as a footprint, we decided to add to the most memorable characteristic and make a new model. Her model found which words were more associated with higher or lower ratings. We decided to take her words and create variables out of them. For example, we have a categorical variable detecting whether or not "cocoa" appears in most-memorable characteristics. We ended looking for the following words: cocoa, off, chemical, fruit, creamy, complex and bitter.
+
+So, we created a 3rd model with the variables: number of ingredients, presence of vanilla, presence of salt, top memorable characteristic, cocoa percentage, presence of "cocoa" in most memorable characteristics, presence of "off" in most memorable characteristics, and so on with the other words/characteristics mentioned above.
+
+```{r}
+#| label: new-model-fit
+
+set.seed(1600)
+
+choco_spec <- linear_reg() %>%
+  set_engine("lm")
+
+choco_rec3 <- recipe(rating ~ cocoa_percent + vanilla + salt + num_ingres +
+                       isCocoa + isOff + isChemical + isFruit + 
+                       isCreamy + isComplex + isBitter, data = choco_training) %>%
+  step_center(num_ingres, cocoa_percent) %>%
+  step_dummy(all_nominal_predictors()) %>%
+  step_zv(all_predictors())
+
+choco_wflow3 <- workflow() %>%
+  add_model(choco_spec) %>%
+  add_recipe(choco_rec3)
+
+set.seed(2500)
+choco_folds <- vfold_cv(choco_training, v = 5)
+choco_fit_rs3 <- choco_wflow3 %>%
+  fit_resamples(choco_folds)
+
+cv_metrics3 <- collect_metrics(choco_fit_rs3, summarize = FALSE)
+
+cv_metrics3 %>%
+  mutate(.estimate = round(.estimate, 3)) %>%
+  pivot_wider(id_cols = id, names_from = .metric, values_from = .estimate) %>%
+  kable(col.names = c("Fold", "RMSE", "R-squared"), caption = "Model 3")
+```
+
 ```{r}
 #| label: fig-model
-#| fig-cap: "Comparing Model 1 and Model 2"
+#| fig-cap: "Comparing Three Models"
 
 #RMSE Visualization
 ggplot() +
@@ -549,11 +601,17 @@ ggplot() +
     color = "#FFC107") +
   geom_line(data = cv_metrics2 %>% filter(.metric == "rmse"),
     mapping = aes(x = id,y = .estimate,
-    color = "Model 2 (Full model)", group = 1)) +
+    color = "Model 2", group = 1)) +
+  geom_point(data = cv_metrics3 %>% filter(.metric == "rmse"),
+    mapping = aes(x = id,y = .estimate),
+    color = "red") +
+  geom_line(data = cv_metrics3 %>% filter(.metric == "rmse"),
+    mapping = aes(x = id,y = .estimate,
+    color = "Model 3", group = 1)) +
   scale_color_manual(name = "Regression Model",
-    breaks=c("Model 1", "Model 2 (Full model)"),
+    breaks=c("Model 1", "Model 2", "Model 3"),
     values=c("Model 1" = "#1E88E5",
-    "Model 2 (Full model)" = "#FFC107")) +
+    "Model 2" = "#FFC107", "Model 3" = "red")) +
   labs(
     title = "Visualization of RMSE for each Cross Validation Fold",
     subtitle = "Separated by Model",
@@ -576,129 +634,25 @@ ggplot() +
     color = "#FFC107") +
   geom_line(data = cv_metrics2 %>% filter(.metric == "rsq"),
     mapping = aes(x = id,y = .estimate,
-    color = "Model 2 (Full model)", group = 1)) +
-    scale_color_manual(name = "Regression Model",
-    breaks=c("Model 1", "Model 2 (Full model)"),
-    values=c("Model 1" = "#1E88E5",
-    "Model 2 (Full model)" = "#FFC107")) +
-  labs(
-    title = "Visualization of R-squared for each Cross Validation Metric",
-    subtitle = "Separated by Model",
-    y = "Rsq Value",
-    x = "Fold"
-  )
-
-```
-
-As both models have similar RMSE and R-squared values for each fold in cross-validation (as seen in Table 1 and 2 and in @fig-model ), we will choose the first model as it has fewer predictor variables and aligns with the goals of parsimony, as it is a less complicated model yet doesn't sacrifice predictive capability.
-
-```{r}
-#| label: print-out-model
-
-choco_fit <- linear_reg() %>%
-  set_engine("lm") %>%
-  fit(rating ~ cocoa_percent + vanilla + salt +
-        num_ingres + top_memorable, data =
-        chocolate_clean)
-
-tidy(choco_fit) %>%
-  kable(digits=3, caption= "Model 1 Fit")
-```
-
-Because our R-squared values are so low, we wanted to explore other options. From https://juliasilge.com/blog/chocolate-ratings/, Dr. Silge made a model predicting a model to predict ratings from most-memorable characteristics. Using her model as a footprint, we decided to add to the most memorable characteristic and make a new model. Her model found which words were more associated with higher or lower ratings. We decided to take her words and create variables out of them. For example, we have a categorical variable detecting whether or not "cocoa" appears in most-memorable characteristics. We ended looking for the following words: cocoa, off, chemical, fruit, creamy, complex and bitter.
-
-So, we created a 3rd model with the variables: number of ingredients, presence of vanilla, presence of salt, top memorable characteristic, cocoa percentage, presence of "cocoa" in most memorable characteristics, presence of "off" in most memorable characteristics, and so on with the other words/characteristics mentioned above.
-
-```{r}
-#| label: new-model-fit
-
-set.seed(1200)
-
-choco_spec <- linear_reg() %>%
-  set_engine("lm")
-
-choco_rec3 <- recipe(rating ~ cocoa_percent + vanilla + salt + num_ingres +
-                       isCocoa + isOff + isChemical + isFruit + 
-                       isCreamy + isComplex + isBitter, data = choco_training) %>%
-  step_center(num_ingres, cocoa_percent) %>%
-  step_dummy(all_nominal_predictors()) %>%
-  step_zv(all_predictors())
-
-choco_wflow3 <- workflow() %>%
-  add_model(choco_spec) %>%
-  add_recipe(choco_rec3)
-
-set.seed(2900)
-choco_folds <- vfold_cv(choco_training, v = 5)
-choco_fit_rs3 <- choco_wflow3 %>%
-  fit_resamples(choco_folds)
-
-cv_metrics3 <- collect_metrics(choco_fit_rs3, summarize = FALSE)
-
-cv_metrics3 %>%
-  mutate(.estimate = round(.estimate, 3)) %>%
-  pivot_wider(id_cols = id, names_from = .metric, values_from = .estimate) %>%
-  kable(col.names = c("Fold", "RMSE", "R-squared"), caption = "Model 3")
-```
-
-```{r}
-#| label: fig-model-comp2
-#| fig-cap: "Comparing Model 1 and 3"
-
-
-ggplot() +
-  geom_point(data = cv_metrics1 %>% filter(.metric == "rmse"),
-    mapping = aes(x = id, y = .estimate),
-    color = "#1E88E5") +
-  geom_line(data = cv_metrics1 %>% filter(.metric == "rmse"),
-    mapping = aes(x = id,y = .estimate,
-    color = "Model 3", group = 1)) +
-  geom_point(data = cv_metrics3 %>% filter(.metric == "rmse"),
-    mapping = aes(x = id,y = .estimate),
-    color = "#FFC107") +
-  geom_line(data = cv_metrics3 %>% filter(.metric == "rmse"),
-    mapping = aes(x = id,y = .estimate,
-    color = "Model 3 (New model)", group = 1)) +
-  scale_color_manual(name = "Regression Model",
-    breaks=c("Model 1", "Model 3 (New model)"),
-    values=c("Model 1" = "#1E88E5",
-    "Model 3 (New model)" = "#FFC107")) +
-  labs(
-    title = "Visualization of RMSE for each Cross Validation Fold",
-    subtitle = "Separated by Model",
-    y = "RMSE Value",
-    x = "Fold"
-  )
-
-
-#RSQ Visualization
-
-ggplot() +
-  geom_point(data = cv_metrics1 %>% filter(.metric == "rsq"),
-    mapping = aes(x = id, y = .estimate),
-    color = "#1E88E5") +
-  geom_line(data = cv_metrics1 %>% filter(.metric == "rsq"),
-    mapping = aes(x = id,y = .estimate,
-    color = "Model 1", group = 1)) +
+    color = "Model 2", group = 1)) +
   geom_point(data = cv_metrics3 %>% filter(.metric == "rsq"),
     mapping = aes(x = id,y = .estimate),
-    color = "#FFC107") +
+    color = "red") +
   geom_line(data = cv_metrics3 %>% filter(.metric == "rsq"),
     mapping = aes(x = id,y = .estimate,
-    color = "Model 3 (New model)", group = 1)) +
-    scale_color_manual(name = "Regression Model",
-    breaks=c("Model 1", "Model 3 (New model)"),
+    color = "Model 3", group = 1)) +
+  scale_color_manual(name = "Regression Model",
+    breaks=c("Model 1", "Model 2", "Model 3"),
     values=c("Model 1" = "#1E88E5",
-    "Model 3 (New model)" = "#FFC107")) +
+    "Model 2" = "#FFC107", "Model 3" = "red")) +
   labs(
     title = "Visualization of R-squared for each Cross Validation Metric",
     subtitle = "Separated by Model",
     y = "Rsq Value",
     x = "Fold"
   )
-```
 
-From Table 4 and @fig-model-comp2, we can see that the model has improved.
+```
 
 # Discussion
 
