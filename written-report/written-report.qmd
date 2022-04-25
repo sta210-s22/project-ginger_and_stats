@@ -12,7 +12,7 @@ editor_options:
 knitr::opts_chunk$set(echo = FALSE, 
                       warning = FALSE, 
                       message = FALSE,
-                      fig.width = 8, fig.asp = 0.618, out.width = "70%",
+                      fig.width = 8, fig.asp = 0.6, out.width = "70%",
   fig.retina = 3, dpi = 300, fig.align = "center")
 ```
 
@@ -37,7 +37,7 @@ world <- ne_countries(scale = "medium", returnclass = "sf")
 ggplot2::theme_set(ggplot2::theme_minimal(base_size = 20))
 ```
 
-# Introduction and data
+# I. Introduction and data
 
 ## Broader Context + Research Question
 
@@ -75,24 +75,14 @@ The general characteristics that will be our main interest are described as foll
 
 The data dictionary can be found [here](https://github.com/sta210-s22/project-ginger_and_stats/tree/main/data).
 
-# Methodology
+# II. Methodology
 
-### Exploratory Data Analysis (EDA)
+## 1. Exploratory Data Analysis (EDA)
 
 Before we began modeling, we first performed some Exploratory Data Analysis to decide how we were going to use the variables in our modeling.
 
-### Shape of Ratings
+### a. Shape of Ratings
 
-```{r}
-#| label: fig-rating
-#| fig-cap: "Ratings"
-ggplot(chocolate, aes(rating)) +
-  geom_histogram(binwidth = 0.25, color = "white")+
-  labs(
-    title = "Distribution of rating",
-    x = "Rating"
-  )
-```
 
 ```{r}
 rating_stat <- chocolate %>%
@@ -106,15 +96,25 @@ rating_stat <- chocolate %>%
 From @fig-rating, we can see that the distribution of the rating is unimodal, centered around the value of 3 or 3.25. It is also left-skewed, with some possible outliers of value 1 or 1.5. The mean of rating is `r round(rating_stat$mean, 3)`, the median is `r round(rating_stat$median, 3)`, and the standard deviation is `r round(rating_stat$sd, 3)`
 
 ```{r}
+#| label: fig-rating
+#| fig-cap: "Ratings"
+ggplot(chocolate, aes(rating)) +
+  geom_histogram(binwidth = 0.25, color = "white")+
+  labs(
+    title = "Distribution of rating",
+    x = "Rating"
+  )
+```
+
+
+```{r}
 #| label: fig-percent-rating
 
 chocolate$cocoa_percent <- as.numeric(gsub('[,%]', '', chocolate$cocoa_percent))
 
 ```
 
-### Ingredients
-
-From @fig-ingre-vis, we can see that the presence of salt and vanilla seem to affect the rating the most out of all the predicters. The presence of salt and vanilla results in more lower ratings, while the amount of high and low ratings remains roughly the same with/without the presence of cocoa butter and lecithin.
+### b. Ingredients
 
 ```{r}
 #| label: ingredients-seperate
@@ -144,7 +144,7 @@ chocolate <- chocolate %>%
   )
 ```
 
-```{r}
+```{r fig.width = 12, fig.height = 8}
 #| label: fig-ingre-vis
 #| fig-cap: "Rating and Ingredients"
 
@@ -177,6 +177,10 @@ pSa <- ggplot(chocolate, aes(salt, fill = as.factor(rating))) +
 
 ```
 
+
+From @fig-ingre-vis, we can see that the presence of salt and vanilla seem to affect the rating the most out of all the predicters. The presence of salt and vanilla results in more lower ratings, while the amount of high and low ratings remains roughly the same with/without the presence of cocoa butter and lecithin.
+
+
 ```{r include = F}
 #| label: fig-num-ingres
 #| fig-cap: "Number of Ingredients and Ratings"
@@ -200,7 +204,7 @@ ggplot(chocolate, aes(num_ingres))+
 # In @fig-num-ingres, we regard the NA value of ingredients as 0, which means we should understand this as nonrecorded value instead of no ingredients are presented in the chocolate. This visualization showcases a right skewed distribution for the number of ingredients. The median is somewhere around 3 ingredients, and there appears to be an outlier centered around 0. This could be as many chocolate bars use at least one of the common ingredients, and it is quite rare for a chocolate bar not to have any of those ingredients.
 ```
 
-### Most Memorable Characteristic
+### d. Most Memorable Characteristic
 
 ```{r}
 #| label: fig-mem-char
@@ -225,9 +229,8 @@ tidy_chocolate %>%
 
 @fig-mem-char is taken from https://juliasilge.com/blog/chocolate-ratings/. From this visualization, we can see that the phrases and most memorable charactersists that were often associated with a higher rating were "balanced" and "complex", as well as fruity chocolate like "fruit", "Cardamon", "floral".
 
-### Country Bean of Origin
+### e. Country Bean of Origin
 
-@fig-cob-vis shows that the majority of cacao beans are produced in central America, South America, Asia, and Africa.
 
 ```{r}
 #| label: fig-cob-vis
@@ -249,7 +252,10 @@ ggplot(data = chocworld_data) +
   labs(title = "Map of countries where cacao beans were produced")
 ```
 
-### Company Location
+
+@fig-cob-vis shows that the majority of cacao beans are produced in central America, South America, Asia, and Africa.
+
+### f. Company Location
 
 @fig-comp-loc shows that the majority of countries that chocolate companies are located in are concentrated in North America and Europe, and that the US is host to the largest amount of chocolate companies.
 
@@ -417,7 +423,7 @@ chocolate_clean <- chocolate_clean %>%
 
 ```
 
-### Data Cleaning
+## 2. Data Cleaning
 
 To get our data ready for modeling, we first performed some data cleaning.
 
@@ -431,13 +437,13 @@ To get our data ready for modeling, we first performed some data cleaning.
 
 5.  In addition to the number of ingredients, we created 2 new variables: vanilla and salt. These variables indicated whether their specified ingredient was listed in the ingredients list. From our EDA, we learned that the presence of salt and vanilla seems to affect the rating the most out of all the ingredients.
 
-### Modeling
+## 3. Modeling
 
 Our main goal of this analysis is to understand how the characteristics of a chocolate can explain its rating. Although the rating only goes from 1 to 5 in 0.25 increments, we treated rating as a quantitative continuous variable. Therefore, we used a linear regression model to fit and predict the rating from the features of a chocolate. We decided compare 2 models: a full model that had all the explanatory variables that we were interested in (location of cocoa bean production, location of chocolate company, number of ingredients, presence of vanilla, presence of salt, top memorable characteristics, and cocoa percentage) and a model with just the "taste" predictors (number of ingredients, presence of vanilla, presence of salt, top memorable characteristics, and cocoa percentage). We defined Model 1 as our model with just the "taste" predictors and Model 2 as our full model. 
 
 To evaluate which model performed better, we decided to perform a cross-validation and compare R-squared and RMSE values instead.
 
-# Results
+# III. Results
 
 ### Ratings vs cocoa percent, ingredients, most memorable characteristics
 
@@ -471,7 +477,8 @@ cv_metrics1 <- collect_metrics(choco_fit_rs1, summarize = FALSE)
 cv_metrics1 %>%
   mutate(.estimate = round(.estimate, 3)) %>%
   pivot_wider(id_cols = id, names_from = .metric, values_from = .estimate) %>%
-  kable(col.names = c("Fold", "RMSE", "R-squared"), caption = "Model 1")
+  kable(col.names = c("Fold", "RMSE", "R-squared"), caption = "Model 1") %>%
+  kable_styling(latex_options = "HOLD_position")
 
 #choco_fit <- linear_reg() %>%
   #set_engine("lm") %>%
@@ -486,7 +493,7 @@ cv_metrics1 %>%
 
 ### All predictors
 
-```{r}
+```{r fig.pos = "H"}
 #| label: fitting full model
 
 choco_rec2 <- recipe(rating ~ cocoa_percent + vanilla + salt + num_ingres + 
@@ -510,8 +517,8 @@ cv_metrics2 <- collect_metrics(choco_fit_rs2, summarize = FALSE)
 cv_metrics2 %>%
   mutate(.estimate = round(.estimate, 3)) %>%
   pivot_wider(id_cols = id, names_from = .metric, values_from = .estimate) %>%
-  kable(col.names = c("Fold", "RMSE", "R-squared"), caption = "Model 2")
-
+  kable(col.names = c("Fold", "RMSE", "R-squared"), caption = "Model 2") %>%
+  kable_styling(latex_options = "HOLD_position")
 
 #choco_fit_full <- linear_reg() %>%
   #set_engine("lm") %>%
@@ -573,10 +580,11 @@ cv_metrics3 <- collect_metrics(choco_fit_rs3, summarize = FALSE)
 cv_metrics3 %>%
   mutate(.estimate = round(.estimate, 3)) %>%
   pivot_wider(id_cols = id, names_from = .metric, values_from = .estimate) %>%
-  kable(col.names = c("Fold", "RMSE", "R-squared"), caption = "Model 3")
+  kable(col.names = c("Fold", "RMSE", "R-squared"), caption = "Model 3") %>%
+  kable_styling(latex_options = "HOLD_position")
 ```
 
-```{r}
+```{r, fig.width = 12, fig.height = 8}
 #| label: fig-model
 #| fig-cap: "Comparing Three Models"
 
@@ -647,7 +655,11 @@ p2 <- ggplot() +
 p1 / p2
 ```
 
-# Discussion
+We can see that the third model gives the lowest RMSE and highest R-squared value over all 5 folds. So we decided to select the third model for prediction and further analysis of our hypotheses. 
+
+# IV. Discussion
+
+Here is the result of the third model:
 
 ```{r}
 #| label: output final model
@@ -657,12 +669,12 @@ choco_test_fit <- choco_wflow3 %>%
 
 tidy(choco_test_fit, conf.int = TRUE) %>%
   kable(digits = 3) %>%
-  kable_styling(position = "center")
+  kable_styling(position = "center", latex_options = "HOLD_position")
 ```
 
 $$
 \begin{aligned}
-\hat{rating} = & 3.210  - .009 \times CocoaPercent + .043 \times NumIngredients \\ & + 0.218 \times isCocoa - 0.134\times isOff - .619 \times isChemical \\ & + .185 \times is Fruit +.233 \times isCreamy + .194 \times isComplex \\ &-.339 \times isBitter - .332 \times Vanilla_{X1} - .207 \times Salt_{X1} \\ 
+\widehat{rating} = & 3.210  - .009 \times CocoaPercent + .043 \times NumIngredients \\ & + 0.218 \times isCocoa - 0.134\times isOff - .619 \times isChemical \\ & + .185 \times is Fruit +.233 \times isCreamy + .194 \times isComplex \\ &-.339 \times isBitter - .332 \times Vanilla_{X1} - .207 \times Salt_{X1} \\ 
 \end{aligned}
 $$
 
@@ -697,7 +709,7 @@ Beyond our hypotheses, our model has revealed other findings. For example, out o
 
 Although we did improve our model in the 3rd model and answered our hypotheses, there are additional items for the future. One of the most obvious ones is trying ordinal logistic regression. For our project, we chose to use linear regression in large part due to the fact that we have not covered ordinal logistic regression. Because our response variable (rating) is not truly continuous, this has influenced the shape of our residuals (as seen in @fig-resid ), making it hard to verify if conditions have been met for linear regression. While ordinal logistic regression would not guarantee a better model, our response variable could perhaps fit the conditions of the ordinal logistic regression better. In addition to trying a different type of model, getting more expansive data (taster's chocolate preferences, quality of chocolate, etc. ) could also potentially improve the model.
 
-```{r}
+```{r out.width= "55%"}
 #| label: fig-resid
 #| fig-cap: "Residuals and Ratings"
 
